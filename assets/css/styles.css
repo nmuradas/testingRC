@@ -1,0 +1,15 @@
+/* Scrollbar suave en todo el sitio */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Personalización del selector de texto */
+::selection {
+    background-color: #0f766e; /* Tu color primario */
+    color: white;
+}
+
+/* Ajuste del modal para que salga desde la derecha suavemente */
+#modal-content {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
