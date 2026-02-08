@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Propiedad - Renty Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { black: '#111', white: '#fff', offwhite: '#F9F9F9' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-offwhite text-black font-sans antialiased">
+
+    <nav class="bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-50 h-20">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 bg-black text-white flex items-center justify-center font-serif text-xl italic">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight text-black">RentyClub</span>
+            </a>
+            <div id="nav-right"></div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-10">
+        
+        <div id="loader" class="text-center py-20">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl text-black"></i>
+            <p class="mt-4 text-gray-500">Cargando disponibilidad...</p>
+        </div>
+
+        <div id="product-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <div class="lg:col-span-2 space-y-8">
+                <div class="h-[500px] w-full rounded-xl overflow-hidden shadow-sm relative bg-gray-200">
+                    <img id="p-image" src="" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/800x600?text=Sin+Imagen'">
+                    <span id="p-type" class="absolute top-4 left-4 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest shadow-sm"></span>
+                </div>
+
+                <div class="border-b border-gray-200 pb-8">
+                    <h1 id="p-title" class="font-serif text-4xl font-bold mb-2"></h1>
+                    <p class="text-gray-500 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot text-black"></i> 
+                        <span id="p-location"></span>
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-xl mb-4 font-serif">Sobre este espacio</h3>
+                    <p id="p-desc" class="text-gray-600 leading-relaxed text-lg font-light"></p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-xl mb-4 font-serif">Ubicación</h3>
+                    <div id="map" class="h-96 w-full rounded-xl border border-gray-200 z-0 relative"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 sticky top-24">
+                    
+                    <div class="flex justify-between items-end mb-8 border-b border-gray-100 pb-6">
+                        <div>
+                            <span id="p-price" class="text-3xl font-bold font-serif"></span>
+                            <span class="text-gray-400">/día</span>
+                        </div>
+                        <div class="flex gap-1 text-black text-xs">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="text-gray-400 ml-1">(New)</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="block text-xs font-bold uppercase text-gray-400">Selecciona tus fechas</label>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="border rounded p-3 hover:border-black transition cursor-pointer relative">
+                                <span class="text-[10px] text-gray-400 block uppercase font-bold">Entrada</span>
+                                <input id="start-date" class="w-full outline-none font-bold bg-transparent cursor-pointer" placeholder="Agrega fecha">
+                            </div>
+                            <div class="border rounded p-3 hover:border-black transition cursor-pointer relative">
+                                <span class="text-[10px] text-gray-400 block uppercase font-bold">Salida</span>
+                                <input id="end-date" class="w-full outline-none font-bold bg-transparent cursor-pointer" placeholder="Agrega fecha" disabled>
+                            </div>
+                        </div>
+
+                        <div id="summary" class="hidden bg-gray-50 p-4 rounded text-sm space-y-2 mt-4">
+                            <div class="flex justify-between">
+                                <span>$ <span id="summ-price">0</span> x <span id="summ-days">0</span> días</span>
+                                <span>$<span id="summ-subtotal">0</span></span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>Tarifa de servicio (10%)</span>
+                                <span>$<span id="summ-fee">0</span></span>
+                            </div>
+                            <div class="border-t pt-2 mt-2 flex justify-between font-bold text-lg">
+                                <span>Total</span>
+                                <span>$<span id="summ-total">0</span></span>
+                            </div>
+                        </div>
+
+                        <button onclick="handleBooking()" class="w-full bg-black text-white py-4 rounded font-bold hover:bg-gray-800 transition shadow-lg mt-4 text-sm uppercase tracking-widest">
+                            Solicitar Reserva
+                        </button>
+                        
+                        <p class="text-xs text-center text-gray-400 mt-4">No se te cobrará nada hasta que el dueño acepte.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // CLIENTE DE DB LOCAL
+        const pageDb = supabase.createClient(
+            'https://pmedrqauhesybkzxraxd.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I'
+        );
+
+        let currentPrice = 0, ownerId = null, spaceId = null, disabledDates = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            spaceId = params.get('id');
+            if(!spaceId) location.href = 'index.html';
+            await loadSpaceDetails();
+        });
+
+        async function loadSpaceDetails() {
+            const { data: space, error } = await pageDb.from('spaces').select('*, bookings(*)').eq('id', spaceId).single();
+            if (error || !space) { alert("No encontrado"); location.href = 'index.html'; return; }
+
+            // 1. Filtrar fechas (Aprobadas o Bloqueadas)
+            if (space.bookings) {
+                space.bookings.forEach(b => {
+                    if (b.status === 'approved' || b.status === 'blocked') {
+                        disabledDates.push({ from: b.start_date, to: b.end_date });
+                    }
+                });
+            }
+
+            // 2. Llenar Textos
+            document.getElementById('p-title').innerText = space.title;
+            document.getElementById('p-location').innerText = space.location;
+            document.getElementById('p-desc').innerText = space.description;
+            document.getElementById('p-type').innerText = space.type;
+            document.getElementById('p-image').src = space.image;
+            document.getElementById('p-price').innerText = '$' + new Intl.NumberFormat('es-AR').format(space.price);
+            
+            currentPrice = space.price; 
+            ownerId = space.owner_id;
+
+            // 3. MOSTRAR CONTENIDO (CRÍTICO PARA EL MAPA)
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('product-content').classList.remove('hidden');
+
+            // 4. Inicializar Mapa (CON RETRASO PARA EVITAR ERROR GRIS)
+            if (space.lat && space.lng) {
+                setTimeout(() => {
+                    const map = L.map('map').setView([space.lat, space.lng], 15);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                        subdomains: 'abcd',
+                        maxZoom: 20
+                    }).addTo(map);
+                    L.marker([space.lat, space.lng]).addTo(map).bindPopup(space.title).openPopup();
+                    map.invalidateSize(); // FORZAR REDIBUJADO
+                }, 300);
+            } else {
+                document.getElementById('map').innerHTML = '<div class="h-full flex items-center justify-center bg-gray-100 text-gray-500">Sin ubicación en mapa</div>';
+            }
+
+            // 5. Inicializar Calendarios
+            const endPicker = flatpickr("#end-date", { locale: "es", dateFormat: "Y-m-d", minDate: "today", disable: disabledDates });
+            flatpickr("#start-date", {
+                locale: "es", dateFormat: "Y-m-d", minDate: "today", disable: disabledDates,
+                onChange: (d, s) => { 
+                    endPicker.set('minDate', s); 
+                    document.getElementById('end-date').disabled = false; 
+                    setTimeout(() => endPicker.open(), 100); 
+                }
+            });
+            document.getElementById('end-date').addEventListener('change', calcTotal);
+        }
+
+        function calcTotal() {
+            const startStr = document.getElementById('start-date').value;
+            const endStr = document.getElementById('end-date').value;
+            if (startStr && endStr) {
+                const start = new Date(startStr);
+                const end = new Date(endStr);
+                
+                let valid = true;
+                disabledDates.forEach(d => {
+                    if (new Date(d.from) >= start && new Date(d.to) <= end) valid = false;
+                });
+                
+                if (!valid || start >= end) {
+                    alert("Fechas no disponibles."); document.getElementById('end-date').value = ""; return;
+                }
+
+                const days = Math.max(1, Math.ceil((end - start) / 86400000));
+                const subtotal = days * currentPrice;
+                const fee = subtotal * 0.10;
+                const total = subtotal + fee;
+
+                const fmt = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('summ-days').innerText = days;
+                document.getElementById('summ-price').innerText = fmt.format(currentPrice);
+                document.getElementById('summ-subtotal').innerText = fmt.format(subtotal);
+                document.getElementById('summ-fee').innerText = fmt.format(fee);
+                document.getElementById('summ-total').innerText = fmt.format(total);
+                document.getElementById('summary').classList.remove('hidden');
+            }
+        }
+
+        async function handleBooking() {
+            if (!currentUser) { location.href = 'login.html'; return; }
+            const start = document.getElementById('start-date').value;
+            const end = document.getElementById('end-date').value;
+            if(!start || !end) return alert("Selecciona fechas");
+
+            const days = Math.max(1, Math.ceil((new Date(end) - new Date(start)) / 86400000));
+            const total = parseFloat(((days * currentPrice) * 1.10).toFixed(2));
+
+            const { error } = await pageDb.from('bookings').insert({
+                space_id: spaceId, renter_id: currentUser.id, owner_id: ownerId,
+                start_date: start, end_date: end, total_price: total, status: 'pending'
+            });
+
+            if(error) alert("Error: " + error.message);
+            else { alert("¡Reserva solicitada!"); location.href = 'dashboard.html'; }
+        }
+    </script>
+</body>
+</html>

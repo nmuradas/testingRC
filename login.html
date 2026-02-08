@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Renty Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { dark: '#1a1a1a', primary: '#0f766e' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center font-sans">
+
+    <div class="bg-white p-10 rounded-xl shadow-2xl w-full max-w-md relative">
+        <a href="index.html" class="absolute top-4 left-4 text-gray-400 hover:text-brand-primary text-sm">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
+        <div class="text-center mb-8 mt-4">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded bg-brand-dark text-white text-xl font-bold mb-4">R</div>
+            <h2 id="form-title" class="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
+            <p id="form-subtitle" class="text-gray-500 text-sm">Ingresa a tu cuenta para gestionar reservas</p>
+        </div>
+
+        <form id="auth-form" class="space-y-5">
+            <div id="name-field" class="hidden">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo</label>
+                <input type="text" id="full-name" class="w-full p-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="Ej: Juan Pérez">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+                <div class="relative">
+                    <i class="fa-solid fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
+                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="hola@ejemplo.com" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3 top-3.5 text-gray-400"></i>
+                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div id="error-msg" class="hidden bg-red-50 text-red-500 text-sm p-3 rounded border border-red-200 text-center"></div>
+            <div id="success-msg" class="hidden bg-green-50 text-green-600 text-sm p-3 rounded border border-green-200 text-center"></div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-brand-primary text-white font-bold py-3 rounded hover:bg-teal-700 transition shadow-lg">
+                Ingresar
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm">
+            <p id="toggle-text" class="text-gray-500">
+                ¿No tienes cuenta? 
+                <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Regístrate aquí</button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN (PEGAR CLAVES)
+        // ==========================================
+        const supabaseUrl = 'https://pmedrqauhesybkzxraxd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I';
+        
+        const db = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // ESTADO
+        let isLoginMode = true;
+
+        // ELEMENTOS DOM
+        const form = document.getElementById('auth-form');
+        const nameField = document.getElementById('name-field');
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleText = document.getElementById('toggle-text');
+        const errorMsg = document.getElementById('error-msg');
+        const successMsg = document.getElementById('success-msg');
+
+        // CAMBIAR MODO (LOGIN <-> REGISTRO)
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
+            
+            if (isLoginMode) {
+                nameField.classList.add('hidden');
+                formTitle.innerText = "Iniciar Sesión";
+                formSubtitle.innerText = "Ingresa a tu cuenta para gestionar reservas";
+                submitBtn.innerText = "Ingresar";
+                toggleText.innerHTML = `¿No tienes cuenta? <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Regístrate aquí</button>`;
+            } else {
+                nameField.classList.remove('hidden');
+                formTitle.innerText = "Crear Cuenta";
+                formSubtitle.innerText = "Únete a la comunidad de RentyClub";
+                submitBtn.innerText = "Registrarme";
+                toggleText.innerHTML = `¿Ya tienes cuenta? <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Inicia sesión</button>`;
+            }
+        }
+
+        // MANEJAR EL ENVÍO
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('full-name').value;
+
+            // Reset mensajes
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Procesando...";
+
+            try {
+                if (isLoginMode) {
+                    // --- LOGIN ---
+                    const { data, error } = await db.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    if (error) throw error;
+                    
+                    window.location.href = 'index.html'; // Redirigir al inicio
+                } else {
+                    // --- REGISTRO ---
+                    if (!fullName) throw new Error("Por favor ingresa tu nombre completo.");
+
+                    const { data, error } = await db.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: { full_name: fullName } // Esto se guarda en profiles gracias al trigger SQL
+                        }
+                    });
+                    if (error) throw error;
+
+                    successMsg.innerText = "Cuenta creada con éxito. Iniciando sesión...";
+                    successMsg.classList.remove('hidden');
+                    
+                    // Pequeño delay para que lean el mensaje
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = err.message || "Ocurrió un error. Verifica tus datos.";
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerText = isLoginMode ? "Ingresar" : "Registrarme";
+            }
+        });
+    </script>
+</body>
+</html>

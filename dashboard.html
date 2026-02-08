@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Renty Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <script>tailwind.config = { theme: { extend: { colors: { black: '#111' } } } }</script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <nav class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-40">
+        <a href="index.html" class="flex items-center gap-2 group">
+            <div class="w-8 h-8 bg-black text-white flex items-center justify-center font-bold rounded-sm">R</div>
+            <span class="font-bold">Dashboard</span>
+        </a>
+        <div id="nav-right"></div>
+    </nav>
+
+    <div class="container mx-auto p-6 max-w-7xl">
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <div class="w-full md:w-64 space-y-2 shrink-0">
+                <p class="text-xs font-bold text-gray-400 uppercase px-4 mb-2">Menú</p>
+                <button onclick="switchTab('hosting')" class="tab-btn w-full text-left px-4 py-3 rounded font-bold bg-black text-white shadow-lg" id="btn-hosting">
+                    <i class="fa-solid fa-store mr-3"></i> Mis Propiedades
+                </button>
+                <button onclick="switchTab('rentals')" class="tab-btn w-full text-left px-4 py-3 rounded font-bold text-gray-500 hover:bg-gray-200 transition" id="btn-rentals">
+                    <i class="fa-solid fa-suitcase mr-3"></i> Mis Viajes
+                </button>
+                
+                <button onclick="switchTab('admin')" class="hidden tab-btn w-full text-left px-4 py-3 rounded font-bold text-red-600 bg-red-50 hover:bg-red-100 transition border border-red-100 mt-8" id="btn-admin">
+                    <i class="fa-solid fa-lock mr-3"></i> Super Admin
+                </button>
+            </div>
+
+            <div class="flex-1 min-h-screen">
+                
+                <div id="view-hosting" class="view-section animate-fade">
+                    <div class="mb-10">
+                        <h2 class="text-2xl font-bold mb-6">Solicitudes y Reservas</h2>
+                        <div id="requests-list" class="space-y-4">Loading...</div>
+                    </div>
+                    <div class="flex justify-between items-center mb-6 border-t pt-8">
+                        <h2 class="text-2xl font-bold">Mis Propiedades</h2>
+                        <a href="create.html" class="bg-black text-white px-4 py-2 rounded text-sm font-bold hover:bg-gray-800">
+                            <i class="fa-solid fa-plus mr-2"></i> Crear Nueva
+                        </a>
+                    </div>
+                    <div id="my-spaces-list" class="grid gap-6">Loading...</div>
+                </div>
+
+                <div id="view-rentals" class="view-section hidden animate-fade">
+                    <h2 class="text-2xl font-bold mb-6">Mis Reservas</h2>
+                    <div id="rentals-list" class="space-y-4">Loading...</div>
+                </div>
+
+                <div id="view-admin" class="view-section hidden animate-fade">
+                    <div class="bg-white p-8 rounded-xl shadow border border-gray-200 mb-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-3xl font-bold text-red-600">Panel Maestro</h2>
+                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold border border-red-200">CONTROL TOTAL</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                            <div class="bg-gray-900 text-white p-6 rounded-lg">
+                                <p class="text-xs uppercase opacity-70 mb-1">Usuarios</p>
+                                <p id="kpi-users" class="text-4xl font-bold">0</p>
+                            </div>
+                            <div class="bg-gray-100 p-6 rounded-lg border">
+                                <p class="text-xs uppercase text-gray-500 mb-1">Propiedades</p>
+                                <p id="kpi-spaces" class="text-4xl font-bold text-black">0</p>
+                            </div>
+                            <div class="bg-gray-100 p-6 rounded-lg border">
+                                <p class="text-xs uppercase text-gray-500 mb-1">Total Reservas</p>
+                                <p id="kpi-bookings" class="text-4xl font-bold text-black">0</p>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-lg mb-4 text-gray-700 uppercase tracking-wide text-xs border-b pb-2">Atención al Cliente: Todas las Reservas</h3>
+                        <div class="overflow-x-auto bg-white border rounded mb-10 max-h-96 overflow-y-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-xs uppercase font-bold text-gray-500 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3">Propiedad</th>
+                                        <th class="px-4 py-3">Fechas</th>
+                                        <th class="px-4 py-3">Total</th>
+                                        <th class="px-4 py-3">Estado</th>
+                                        <th class="px-4 py-3 text-right">Acciones Admin</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-bookings-list"></tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="font-bold text-lg mb-4 text-gray-700 uppercase tracking-wide text-xs border-b pb-2">Gestión de Usuarios</h3>
+                        <div class="overflow-x-auto bg-white border rounded mb-10 max-h-64 overflow-y-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-xs uppercase font-bold text-gray-500 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3">Email</th>
+                                        <th class="px-4 py-3">Rol</th>
+                                        <th class="px-4 py-3">Cambiar Rol</th>
+                                        <th class="px-4 py-3 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-list"></tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="font-bold text-lg mb-4 text-gray-700 uppercase tracking-wide text-xs border-b pb-2">Todas las Propiedades</h3>
+                        <div class="overflow-x-auto bg-white border rounded max-h-64 overflow-y-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-xs uppercase font-bold text-gray-500 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3">Título</th>
+                                        <th class="px-4 py-3">Dueño ID</th>
+                                        <th class="px-4 py-3">Precio</th>
+                                        <th class="px-4 py-3 text-right">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-spaces-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="block-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-lg max-w-md w-full shadow-2xl">
+            <h3 class="text-xl font-bold mb-2">Bloquear Fechas</h3>
+            <p class="text-sm text-gray-500 mb-4">Selecciona los días no disponibles.</p>
+            <input type="hidden" id="block-space-id">
+            <input id="block-dates" class="w-full border p-3 rounded font-bold mb-6" placeholder="Seleccionar rango">
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('block-modal').classList.add('hidden')" class="flex-1 py-3 font-bold text-gray-500 bg-gray-100 rounded hover:bg-gray-200">Cancelar</button>
+                <button onclick="confirmBlock()" class="flex-1 py-3 bg-black text-white font-bold rounded hover:bg-gray-800">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // CONFIGURACIÓN CLIENTE
+        const adminDb = supabase.createClient(
+            'https://pmedrqauhesybkzxraxd.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I'
+        );
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            setTimeout(async () => {
+                const { data: { session } } = await adminDb.auth.getSession();
+                if (!session) { location.href = 'login.html'; return; }
+                currentUserId = session.user.id;
+                
+                const { data: profile } = await adminDb.from('profiles').select('*').eq('id', currentUserId).single();
+                
+                // Activar pestaña Admin si corresponde
+                if (profile && profile.role === 'super_admin') {
+                    document.getElementById('btn-admin').classList.remove('hidden');
+                    loadAdminData();
+                }
+                
+                loadHostingData();
+                loadMyRentals();
+            }, 500);
+        });
+
+        // ==========================================
+        // 1. LÓGICA DE DUEÑO (HOSTING)
+        // ==========================================
+        async function loadHostingData() {
+            // A. Solicitudes
+            const { data: requests } = await adminDb
+                .from('bookings')
+                .select('*, spaces(title)')
+                .eq('owner_id', currentUserId)
+                .neq('status', 'blocked')
+                .order('created_at', {ascending:false});
+                
+            const list = document.getElementById('requests-list');
+            list.innerHTML = requests.length ? '' : '<p class="text-gray-400 p-4 border border-dashed text-center rounded">Sin solicitudes activas.</p>';
+            
+            requests.forEach(r => {
+                let badge = '', buttons = '';
+                if (r.status === 'pending') {
+                    badge = '<span class="text-orange-600 bg-orange-50 text-xs px-2 py-1 rounded font-bold uppercase">Pendiente</span>';
+                    buttons = `
+                        <button onclick="updateStatus(${r.id}, 'approved')" class="bg-black text-white px-3 py-1 rounded text-xs font-bold">Aprobar</button>
+                        <button onclick="updateStatus(${r.id}, 'rejected')" class="border text-black px-3 py-1 rounded text-xs font-bold">Rechazar</button>`;
+                } else if (r.status === 'approved') {
+                    badge = '<span class="text-green-600 bg-green-50 text-xs px-2 py-1 rounded font-bold uppercase">Confirmada</span>';
+                    buttons = `<button onclick="cancelBooking(${r.id})" class="text-red-500 border border-red-200 bg-red-50 px-3 py-1 rounded text-xs font-bold hover:bg-red-100">Cancelar Reserva</button>`;
+                } else if (r.status === 'rejected') badge = '<span class="text-red-600 bg-red-50 text-xs px-2 py-1 rounded font-bold uppercase">Rechazada</span>';
+                else if (r.status === 'cancelled') badge = '<span class="text-gray-500 bg-gray-100 text-xs px-2 py-1 rounded font-bold uppercase">Cancelada</span>';
+
+                list.innerHTML += `
+                    <div class="bg-white border p-4 rounded shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1"><p class="font-bold">${r.spaces.title}</p>${badge}</div>
+                            <p class="text-xs text-gray-500"><i class="fa-regular fa-calendar mr-1"></i> ${r.start_date} al ${r.end_date} <span class="font-bold text-black ml-2">$${r.total_price}</span></p>
+                        </div>
+                        <div class="flex gap-2 self-end md:self-center">${buttons}</div>
+                    </div>`;
+            });
+
+            // B. Mis Propiedades
+            const { data: spaces } = await adminDb.from('spaces').select('*').eq('owner_id', currentUserId);
+            const { data: blocks } = await adminDb.from('bookings').select('*').eq('owner_id', currentUserId).eq('status', 'blocked');
+            const spacesList = document.getElementById('my-spaces-list');
+            spacesList.innerHTML = spaces.length ? '' : '<p class="text-gray-500">No tienes propiedades.</p>';
+
+            spaces.forEach(s => {
+                const sBlocks = blocks.filter(b => b.space_id === s.id);
+                let blocksHtml = '';
+                if(sBlocks.length > 0) {
+                    blocksHtml = `<div class="mt-4 pt-4 border-t border-gray-100 bg-gray-50/50 -mx-6 px-6 pb-2"><p class="text-[10px] font-bold text-gray-400 uppercase mb-2">Fechas Bloqueadas:</p><div class="flex flex-wrap gap-2">`;
+                    sBlocks.forEach(sb => {
+                        blocksHtml += `<span class="bg-white border border-gray-200 text-xs px-2 py-1 rounded flex items-center gap-2 shadow-sm font-mono text-gray-600">${sb.start_date} <i class="fa-solid fa-arrow-right text-[10px] text-gray-300"></i> ${sb.end_date} <button onclick="deleteBlock(${sb.id})" class="text-red-400 hover:text-red-600 ml-1 font-bold">✕</button></span>`;
+                    });
+                    blocksHtml += `</div></div>`;
+                }
+
+                spacesList.innerHTML += `
+                    <div class="bg-white p-6 rounded border shadow-sm transition hover:shadow-md">
+                        <div class="flex gap-5 mb-2">
+                            <img src="${s.image}" class="w-20 h-20 object-cover rounded bg-gray-200">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg leading-tight">${s.title}</h3>
+                                <p class="text-xs text-gray-500 mb-1">${s.location}</p>
+                                <p class="text-sm font-bold text-black">$${s.price}/día</p>
+                            </div>
+                            <div class="flex flex-col gap-2 justify-start">
+                                <button onclick="openBlockModal(${s.id})" class="bg-black text-white text-xs px-3 py-2 rounded font-bold hover:bg-gray-800">Bloquear</button>
+                                <button onclick="deleteSpace(${s.id})" class="text-red-500 border border-red-100 text-xs px-3 py-2 rounded font-bold hover:bg-red-50">Eliminar</button>
+                            </div>
+                        </div>
+                        ${blocksHtml}
+                    </div>`;
+            });
+        }
+
+        // ==========================================
+        // 2. LÓGICA DE INQUILINO (RENTALS)
+        // ==========================================
+        async function loadMyRentals() {
+            const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title, location)').eq('renter_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
+            const list = document.getElementById('rentals-list');
+            list.innerHTML = bookings.length ? '' : '<p class="text-gray-400 italic">No tienes reservas.</p>';
+
+            bookings.forEach(b => {
+                let badge = '', canCancel = false;
+                if(b.status === 'approved') { badge = 'bg-green-100 text-green-800 border-green-200'; canCancel=true; }
+                else if(b.status === 'pending') { badge = 'bg-yellow-50 text-yellow-800 border-yellow-200'; canCancel=true; }
+                else if(b.status === 'rejected') badge = 'bg-red-50 text-red-800 border-red-200'; 
+                else badge = 'bg-gray-100 text-gray-500 border-gray-200';
+                
+                const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(b.total_price);
+
+                list.innerHTML += `
+                    <div class="bg-white p-5 border rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-1"><h4 class="font-bold text-lg">${b.spaces.title}</h4><span class="${badge} text-[10px] px-2 py-0.5 rounded border font-bold uppercase tracking-wider">${b.status}</span></div>
+                            <p class="text-xs text-gray-500 mb-3"><i class="fa-solid fa-location-dot mr-1"></i> ${b.spaces.location}</p>
+                            <div class="flex items-center gap-4 text-sm bg-gray-50 p-2 rounded w-fit border border-gray-100"><span class="font-medium font-mono text-xs text-gray-700">${b.start_date} <i class="fa-solid fa-arrow-right mx-1 text-gray-300"></i> ${b.end_date}</span><div class="w-px h-4 bg-gray-300"></div><div class="font-bold text-black">${price}</div></div>
+                        </div>
+                        <div class="w-full md:w-auto flex justify-end">${canCancel ? `<button onclick="cancelBooking(${b.id})" class="text-red-500 text-xs font-bold border border-red-200 px-3 py-2 rounded hover:bg-red-50 w-full md:w-auto">Cancelar</button>` : ''}</div>
+                    </div>`;
+            });
+        }
+
+        // ==========================================
+        // 3. LÓGICA DE SUPER ADMIN (ALL INCLUSIVE)
+        // ==========================================
+        async function loadAdminData() {
+            // KPIs
+            const { count: uCount } = await adminDb.from('profiles').select('*', { count: 'exact', head: true });
+            const { count: sCount } = await adminDb.from('spaces').select('*', { count: 'exact', head: true });
+            const { count: bCount } = await adminDb.from('bookings').select('*', { count: 'exact', head: true });
+            document.getElementById('kpi-users').innerText = uCount || 0;
+            document.getElementById('kpi-spaces').innerText = sCount || 0;
+            document.getElementById('kpi-bookings').innerText = bCount || 0;
+
+            // A. GESTIÓN DE TODAS LAS RESERVAS (ATENCIÓN AL CLIENTE)
+            const { data: allBookings } = await adminDb.from('bookings').select('*, spaces(title)').order('created_at', {ascending: false});
+            const bookingsTable = document.getElementById('admin-bookings-list');
+            bookingsTable.innerHTML = '';
+
+            allBookings.forEach(b => {
+                let actions = '';
+                // Lógica de botones para Admin
+                if (b.status === 'pending') {
+                    actions = `
+                        <button onclick="adminUpdateStatus(${b.id}, 'approved')" class="text-green-600 hover:text-green-800 font-bold text-xs mr-2">Aprobar</button>
+                        <button onclick="adminUpdateStatus(${b.id}, 'rejected')" class="text-orange-600 hover:text-orange-800 font-bold text-xs">Rechazar</button>`;
+                } else if (b.status === 'approved') {
+                    actions = `<button onclick="adminUpdateStatus(${b.id}, 'cancelled')" class="text-red-500 hover:text-red-700 font-bold text-xs">Cancelar</button>`;
+                } else if (b.status === 'blocked') {
+                    actions = `<button onclick="deleteBlock(${b.id})" class="text-gray-500 hover:text-red-500 font-bold text-xs">Liberar Fecha</button>`;
+                } else {
+                    actions = `<span class="text-gray-400 text-xs">Sin acciones</span>`;
+                }
+
+                bookingsTable.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-bold text-xs truncate max-w-[150px]">${b.spaces ? b.spaces.title : 'Propiedad Borrada'}</td>
+                        <td class="px-4 py-3 text-xs font-mono">${b.start_date}<br>${b.end_date}</td>
+                        <td class="px-4 py-3 text-xs">$${b.total_price}</td>
+                        <td class="px-4 py-3"><span class="bg-gray-100 text-xs px-2 py-1 rounded font-bold uppercase">${b.status}</span></td>
+                        <td class="px-4 py-3 text-right">${actions}</td>
+                    </tr>`;
+            });
+
+            // B. GESTIÓN USUARIOS
+            const { data: users } = await adminDb.from('profiles').select('*').order('created_at', {ascending: false});
+            const userTable = document.getElementById('admin-users-list');
+            userTable.innerHTML = '';
+            users.forEach(u => {
+                userTable.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-bold text-gray-700">${u.email}</td>
+                        <td class="px-4 py-3"><span class="bg-gray-200 text-xs px-2 py-1 rounded font-mono">${u.role}</span></td>
+                        <td class="px-4 py-3"><select onchange="changeUserRole('${u.id}', this.value)" class="border p-1 rounded text-xs"><option value="user" ${u.role==='user'?'selected':''}>User</option><option value="owner" ${u.role==='owner'?'selected':''}>Owner</option><option value="super_admin" ${u.role==='super_admin'?'selected':''}>Super Admin</option></select></td>
+                        <td class="px-4 py-3 text-right"><button onclick="adminDeleteUser('${u.id}')" class="text-red-500 font-bold text-xs bg-red-50 px-2 py-1 rounded">Eliminar</button></td>
+                    </tr>`;
+            });
+
+            // C. GESTIÓN PROPIEDADES
+            const { data: spaces } = await adminDb.from('spaces').select('*').order('created_at', {ascending: false});
+            const spaceTable = document.getElementById('admin-spaces-list');
+            spaceTable.innerHTML = '';
+            spaces.forEach(s => {
+                spaceTable.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-3 font-bold text-gray-800">${s.title}</td>
+                        <td class="px-4 py-3 text-xs text-gray-500 font-mono">${s.owner_id}</td>
+                        <td class="px-4 py-3 text-xs font-bold">$${s.price}</td>
+                        <td class="px-4 py-3 text-right"><button onclick="deleteSpace('${s.id}', true)" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Eliminar</button></td>
+                    </tr>`;
+            });
+        }
+
+        // ==========================================
+        // ACCIONES GENERALES & ADMIN
+        // ==========================================
+        async function updateStatus(id, status) {
+            await adminDb.from('bookings').update({status}).eq('id', id);
+            loadHostingData();
+        }
+
+        async function adminUpdateStatus(id, status) {
+            if(!confirm(`ADMIN: ¿Cambiar estado a ${status}?`)) return;
+            await adminDb.from('bookings').update({status}).eq('id', id);
+            loadAdminData();
+        }
+
+        async function cancelBooking(id) {
+            if(!confirm("¿Cancelar reserva y liberar fechas?")) return;
+            await adminDb.from('bookings').update({status: 'cancelled'}).eq('id', id);
+            location.reload();
+        }
+
+        async function deleteBlock(id) {
+            if(!confirm("¿Liberar fechas?")) return;
+            await adminDb.from('bookings').delete().eq('id', id);
+            // Recargar según vista
+            if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData();
+            else loadHostingData();
+        }
+        
+        async function deleteSpace(id, isAdmin=false) {
+            if(!confirm("⚠️ ¿Eliminar propiedad?")) return;
+            await adminDb.from('spaces').delete().eq('id', id);
+            isAdmin ? loadAdminData() : loadHostingData();
+        }
+
+        async function changeUserRole(id, role) {
+            if(!confirm(`¿Cambiar rol a ${role}?`)) return;
+            await adminDb.from('profiles').update({role}).eq('id', id);
+            loadAdminData();
+        }
+        async function adminDeleteUser(id) {
+            if(!confirm("⚠️ ¿BORRAR USUARIO? Irreversible.")) return;
+            await adminDb.from('profiles').delete().eq('id', id);
+            loadAdminData();
+        }
+
+        // MODAL BLOQUEO
+        let cal;
+        function openBlockModal(id) {
+            document.getElementById('block-space-id').value = id;
+            document.getElementById('block-modal').classList.remove('hidden');
+            if(cal) cal.destroy();
+            cal = flatpickr("#block-dates", { mode: "range", minDate: "today" });
+        }
+        async function confirmBlock() {
+            const spaceId = document.getElementById('block-space-id').value;
+            const dates = cal.selectedDates;
+            if(dates.length!==2) return alert("Selecciona rango");
+            
+            const s = new Date(dates[0].getTime() - (dates[0].getTimezoneOffset()*60000)).toISOString().split('T')[0];
+            const e = new Date(dates[1].getTime() - (dates[1].getTimezoneOffset()*60000)).toISOString().split('T')[0];
+
+            await adminDb.from('bookings').insert({
+                space_id: spaceId, owner_id: currentUserId, renter_id: currentUserId,
+                start_date: s, end_date: e, total_price: 0, status: 'blocked'
+            });
+            document.getElementById('block-modal').classList.add('hidden');
+            loadHostingData();
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden'));
+            document.getElementById('view-'+t).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('bg-black','text-white','shadow-lg');b.classList.add('text-gray-500')});
+            document.getElementById('btn-'+t).classList.add('bg-black','text-white','shadow-lg');
+            document.getElementById('btn-'+t).classList.remove('text-gray-500');
+        }
+    </script>
+</body>
+</html>

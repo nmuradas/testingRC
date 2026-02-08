@@ -3,295 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Renty Club - Espacios Comerciales</title>
+    <title>Renty Club | Alquila Espacios Comerciales</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            dark: '#1a1a1a',   
-                            primary: '#0f766e', 
-                            light: '#f3f4f6',  
-                            accent: '#d97706'  
-                        }
+                        black: '#111111', 
+                        white: '#ffffff',
+                        offwhite: '#F9F9F9',
+                        accent: '#222222'
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .hero-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=90');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* Efecto Parallax suave */
+            height: 90vh; /* Pantalla casi completa */
+        }
+        
+        /* Inputs del Buscador */
+        .search-field {
+            border-right: 1px solid #eee;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .search-field:last-child { border-right: none; }
+        .search-field:hover { background-color: #f9f9f9; }
+        
+        .search-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #888;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .search-input {
+            width: 100%;
+            outline: none;
+            background: transparent;
+            font-weight: 500;
+            color: #111;
+            font-size: 0.95rem;
+        }
+
+        /* Select personalizado simple */
+        select.search-input {
+            appearance: none;
+            cursor: pointer;
         }
     </style>
 </head>
-<body class="text-brand-dark bg-white">
+<body class="text-black bg-white antialiased">
 
-    <nav class="bg-white/95 backdrop-blur-sm fixed w-full z-50 border-b border-gray-100 transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold tracking-tighter flex items-center gap-2">
-                <div class="w-8 h-8 bg-brand-dark text-white flex items-center justify-center rounded">R</div>
-                Renty<span class="text-brand-primary">Club</span>
+    <nav class="bg-white fixed w-full z-50 top-0 border-b border-gray-100 h-20 flex items-center transition-all duration-300">
+        <div class="container mx-auto px-6 flex justify-between items-center w-full">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 bg-black text-white flex items-center justify-center font-serif text-xl italic">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight text-black">RentyClub</span>
             </a>
-            <div class="hidden md:flex space-x-8 text-sm font-semibold uppercase tracking-wide text-gray-600">
-                <a href="#inicio" class="hover:text-brand-primary transition">Inicio</a>
-                <a href="#catalogo" class="hover:text-brand-primary transition">Espacios</a>
-                <a href="#testimonios" class="hover:text-brand-primary transition">Opiniones</a>
-                <a href="#contacto" class="hover:text-brand-primary transition">Contacto</a>
-            </div>
-            <div class="flex items-center gap-5">
-                <button onclick="toggleCart()" class="relative group">
-                    <i class="fa-solid fa-briefcase text-xl text-gray-600 group-hover:text-brand-primary transition"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
-                </button>
-            </div>
+            <div id="nav-right" class="flex items-center gap-8"></div>
         </div>
     </nav>
 
-    <section id="inicio" class="hero-bg h-screen min-h-[600px] flex items-center justify-center text-white relative">
-        <div class="container mx-auto px-6 text-center pt-20">
-            <div data-aos="fade-down" data-aos-duration="1000">
-                <span class="bg-brand-primary/20 text-brand-primary bg-opacity-30 border border-brand-primary/50 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block backdrop-blur-sm text-white">
-                    Marketplace Exclusivo
-                </span>
-            </div>
-            
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight" data-aos="fade-up" data-aos-delay="200">
-                Encuentra el espacio perfecto <br> para tu próxima idea.
+    <header class="hero-bg flex flex-col justify-center items-center text-white text-center px-4 relative mt-20">
+        <div class="max-w-6xl w-full">
+            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight drop-shadow-lg">
+                Espacios para ideas<br><i class="font-light">que cambian el mundo.</i>
             </h1>
-            
-            <p class="text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-light" data-aos="fade-up" data-aos-delay="400">
-                Accede a locales comerciales, pop-up stores y oficinas temporales en las mejores ubicaciones.
+            <p class="text-lg md:text-xl font-light mb-12 opacity-90 tracking-wide max-w-2xl mx-auto drop-shadow-md">
+                Accede a locales, oficinas y showrooms exclusivos por días, semanas o meses.
             </p>
             
-            <div class="bg-white p-4 rounded shadow-2xl max-w-4xl mx-auto flex flex-col md:flex-row gap-4 items-center" data-aos="zoom-in" data-aos-delay="600">
-                <div class="flex-1 w-full text-left border-b md:border-b-0 md:border-r border-gray-200 px-4 py-2">
-                    <label class="block text-xs font-bold text-gray-400 uppercase">Ubicación</label>
-                    <select class="w-full bg-transparent font-bold text-gray-800 focus:outline-none cursor-pointer">
-                        <option>Buenos Aires, Toda</option>
-                        <option>Palermo Soho</option>
-                        <option>Puerto Madero</option>
-                    </select>
+            <div class="bg-white rounded shadow-2xl flex flex-col md:flex-row w-full overflow-hidden text-left min-h-[80px]">
+                
+                <div class="search-field flex-1 px-6 py-4 cursor-text" onclick="document.getElementById('location-input').focus()">
+                    <label class="search-label">¿Dónde?</label>
+                    <input id="location-input" type="text" placeholder="Barrio, Ciudad..." class="search-input placeholder-gray-400">
                 </div>
-                <div class="flex-1 w-full text-left px-4 py-2">
-                    <label class="block text-xs font-bold text-gray-400 uppercase">Tipo</label>
-                    <select id="type-filter" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none cursor-pointer">
+
+                <div class="search-field flex-1 px-6 py-4 cursor-pointer" onclick="document.getElementById('start-date-search')._flatpickr.open()">
+                    <label class="search-label">Entrada</label>
+                    <input id="start-date-search" type="text" placeholder="Añadir fecha" class="search-input placeholder-gray-400 cursor-pointer">
+                </div>
+
+                <div class="search-field flex-1 px-6 py-4 cursor-pointer" onclick="document.getElementById('end-date-search')._flatpickr.open()">
+                    <label class="search-label">Salida</label>
+                    <input id="end-date-search" type="text" placeholder="Añadir fecha" class="search-input placeholder-gray-400 cursor-pointer">
+                </div>
+
+                <div class="search-field flex-1 px-6 py-4">
+                    <label class="search-label">Tipo</label>
+                    <select id="type-input" class="search-input bg-white">
                         <option value="all">Todos los espacios</option>
-                        <option value="Local">Local a la calle</option>
-                        <option value="Oficina">Oficina / Cowork</option>
+                        <option value="Local">Local Comercial</option>
                         <option value="Showroom">Showroom</option>
+                        <option value="Oficina">Oficina</option>
+                        <option value="Depósito">Depósito</option>
                     </select>
                 </div>
-                <button onclick="filterSpaces()" class="bg-brand-primary text-white px-8 py-4 rounded font-bold hover:bg-teal-700 transition w-full md:w-auto">
-                    <i class="fa-solid fa-magnifying-glass mr-2"></i> Buscar
+
+                <button onclick="filterSpaces()" class="bg-black text-white px-8 py-4 font-bold hover:bg-gray-800 transition uppercase tracking-widest text-xs md:w-auto w-full">
+                    Buscar
                 </button>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl font-bold text-brand-dark mb-4">Experiencia sin fricción</h2>
-                <p class="text-gray-500 max-w-xl mx-auto">Gestionamos todo el proceso para que tú solo te ocupes de tu negocio.</p>
+    <section class="py-24 container mx-auto px-6">
+        <h2 class="font-serif text-4xl text-black mb-10">Explora por colección</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="relative h-[450px] cursor-pointer group overflow-hidden" onclick="setTypeAndSearch('Local')">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h3 class="font-serif text-3xl italic mb-2">Retail</h3>
+                    <p class="text-sm font-light">Locales en calles principales</p>
+                </div>
             </div>
             
+            <div class="relative h-[450px] cursor-pointer group overflow-hidden" onclick="setTypeAndSearch('Showroom')">
+                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h3 class="font-serif text-3xl italic mb-2">Eventos</h3>
+                    <p class="text-sm font-light">Galerías y Showrooms</p>
+                </div>
+            </div>
+
+            <div class="relative h-[450px] cursor-pointer group overflow-hidden" onclick="setTypeAndSearch('Oficina')">
+                <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                <div class="absolute bottom-8 left-8 text-white">
+                    <h3 class="font-serif text-3xl italic mb-2">Workspace</h3>
+                    <p class="text-sm font-light">Oficinas listas para usar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-offwhite border-t border-b border-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl mb-4">Lo que dicen de nosotros</h2>
+                <div class="w-20 h-1 bg-black mx-auto"></div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-16 h-16 bg-blue-100 text-brand-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                        <i class="fa-regular fa-compass"></i>
+                <div class="bg-white p-8 shadow-sm">
+                    <div class="text-yellow-400 text-xs mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-gray-700 mb-6">"RentyClub nos permitió abrir nuestro Pop-Up en Palermo en menos de 48 horas. La gestión fue impecable."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover"></div>
+                        <div>
+                            <p class="font-bold text-sm">Sofía M.</p>
+                            <p class="text-xs text-gray-500">Fundadora, BohoStyle</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">1. Explora</h3>
-                    <p class="text-gray-500 text-sm">Filtra por ubicación y características. Visualiza tours 360°.</p>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                        <i class="fa-regular fa-calendar-check"></i>
+                <div class="bg-white p-8 shadow-sm">
+                    <div class="text-yellow-400 text-xs mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-gray-700 mb-6">"La flexibilidad para alquilar por semanas cambió nuestro modelo de negocio. Muy recomendado."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-full h-full object-cover"></div>
+                        <div>
+                            <p class="font-bold text-sm">Julián A.</p>
+                            <p class="text-xs text-gray-500">CEO, TechStart</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">2. Reserva Online</h3>
-                    <p class="text-gray-500 text-sm">Sin papeleo físico. Firma digital y pagos seguros en el acto.</p>
                 </div>
-                <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-xl hover:-translate-y-2 transition duration-300" data-aos="fade-up" data-aos-delay="300">
-                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                        <i class="fa-solid fa-store"></i>
+                <div class="bg-white p-8 shadow-sm">
+                    <div class="text-yellow-400 text-xs mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-gray-700 mb-6">"Encontramos un showroom increíble para la Fashion Week. El proceso de pago es muy seguro."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-full h-full object-cover"></div>
+                        <div>
+                            <p class="font-bold text-sm">Carla P.</p>
+                            <p class="text-xs text-gray-500">Event Planner</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">3. Check-in Smart</h3>
-                    <p class="text-gray-500 text-sm">Acceso mediante código QR o llave digital. Listo para operar.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="catalogo" class="py-20">
+    <section id="catalogo" class="py-24 bg-white">
         <div class="container mx-auto px-6">
-            <div class="flex justify-between items-end mb-12" data-aos="fade-right">
-                <div>
-                    <h2 class="text-3xl font-bold text-brand-dark">Espacios Destacados</h2>
-                    <p class="text-gray-500 mt-2">Curaduría de las mejores oportunidades.</p>
-                </div>
-            </div>
-            <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                </div>
-        </div>
-    </section>
+            <h2 class="font-serif text-4xl mb-4 text-black">Novedades</h2>
+            <p class="text-gray-500 mb-12 text-lg font-light border-b border-gray-100 pb-8">Espacios recién agregados a la plataforma.</p>
 
-    <section id="testimonios" class="py-20 bg-brand-dark text-white overflow-hidden">
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <span class="text-brand-primary font-bold tracking-widest uppercase text-sm">Comunidad</span>
-                <h2 class="text-3xl md:text-4xl font-bold mt-2">Lo que dicen nuestros clientes</h2>
+            <div id="loader" class="text-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-black"></i>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10" data-aos="flip-left" data-aos-delay="100">
-                    <div class="flex text-yellow-400 mb-4 gap-1">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-gray-300 italic mb-6">"Necesitaba un local por 3 meses para la temporada de verano en Palermo. Renty Club resolvió todo en 48 horas. Impresionante."</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full border-2 border-brand-primary">
-                        <div>
-                            <h4 class="font-bold text-sm">Sofía Martinez</h4>
-                            <p class="text-xs text-gray-400">Dueña de "Boho Style"</p>
-                        </div>
-                    </div>
+            <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8 hidden">
                 </div>
-
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10" data-aos="flip-left" data-aos-delay="200">
-                    <div class="flex text-yellow-400 mb-4 gap-1">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
-                    <p class="text-gray-300 italic mb-6">"La flexibilidad que ofrecen no existe en ninguna inmobiliaria tradicional. Pude testear mi producto sin atarme a contratos largos."</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full border-2 border-brand-primary">
-                        <div>
-                            <h4 class="font-bold text-sm">Julián Alvarez</h4>
-                            <p class="text-xs text-gray-400">CEO de TechStart</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/10" data-aos="flip-left" data-aos-delay="300">
-                    <div class="flex text-yellow-400 mb-4 gap-1">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <p class="text-gray-300 italic mb-6">"El soporte al cliente es excelente. Tuvimos un problema con el wifi del local y lo solucionaron enviando un técnico en 1 hora."</p>
-                    <div class="flex items-center gap-4">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full border-2 border-brand-primary">
-                        <div>
-                            <h4 class="font-bold text-sm">Carla Peterson</h4>
-                            <p class="text-xs text-gray-400">Event Planner</p>
-                        </div>
-                    </div>
-                </div>
+            
+            <div id="no-results" class="hidden text-center py-24 text-gray-400 font-serif text-xl">
+                No encontramos espacios con esos criterios.
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-brand-light relative">
+    <footer class="bg-black text-white py-20">
         <div class="container mx-auto px-6">
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row" data-aos="zoom-in-up">
-                <div class="md:w-1/2 p-12 flex flex-col justify-center">
-                    <h3 class="text-3xl font-bold text-brand-dark mb-4">No te pierdas las novedades</h3>
-                    <p class="text-gray-500 mb-8">Recibe alertas semanales sobre nuevos locales en zonas calientes y descuentos exclusivos para miembros.</p>
-                    
-                    <form id="newsletter-form" class="flex flex-col gap-3">
-                        <div class="relative">
-                            <i class="fa-regular fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="email" id="newsletter-email" placeholder="Tu correo electrónico" required 
-                                class="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary transition">
-                        </div>
-                        <button type="submit" class="bg-brand-primary text-white font-bold py-4 rounded-lg hover:bg-teal-700 transition shadow-lg shadow-teal-500/30">
-                            Suscribirme Ahora
-                        </button>
-                        <p class="text-xs text-gray-400 mt-2 text-center">Respetamos tu privacidad. Sin spam.</p>
-                    </form>
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+                <div class="max-w-sm">
+                    <div class="font-serif text-2xl font-bold mb-4">RentyClub</div>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        Conectando marcas con los mejores espacios comerciales a corto plazo. Sin contratos largos, sin complicaciones.
+                    </p>
                 </div>
-                <div class="md:w-1/2 bg-brand-dark relative h-64 md:h-auto">
-                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
-                         class="absolute inset-0 w-full h-full object-cover opacity-60">
-                    <div class="absolute inset-0 flex items-center justify-center p-8 text-center">
-                        <div class="border border-white/30 p-8 backdrop-blur-sm rounded-lg">
-                            <h4 class="text-white font-bold text-2xl">+500 Marcas</h4>
-                            <p class="text-gray-300 text-sm">Ya confían en Renty Club</p>
-                        </div>
+                <div class="grid grid-cols-2 gap-12 text-sm">
+                    <div>
+                        <h4 class="font-bold mb-4 uppercase tracking-wider text-xs text-gray-500">Plataforma</h4>
+                        <ul class="space-y-3 font-light">
+                            <li><a href="#" class="hover:text-white transition">Cómo funciona</a></li>
+                            <li><a href="#" class="hover:text-white transition">Precios</a></li>
+                            <li><a href="#" class="hover:text-white transition">Confianza y Seguridad</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4 uppercase tracking-wider text-xs text-gray-500">Soporte</h4>
+                        <ul class="space-y-3 font-light">
+                            <li><a href="#" class="hover:text-white transition">Centro de Ayuda</a></li>
+                            <li><a href="#" class="hover:text-white transition">Contacto</a></li>
+                            <li><a href="#" class="hover:text-white transition">Términos y Privacidad</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <footer id="contacto" class="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
-        <div class="container mx-auto px-6 text-center md:text-left">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div>
-                    <div class="text-2xl font-bold text-white mb-4 flex items-center justify-center md:justify-start gap-2">
-                       <div class="w-6 h-6 bg-white text-brand-dark flex items-center justify-center rounded text-sm">R</div>
-                       RentyClub
-                    </div>
-                    <p class="text-sm">Conectando marcas con los mejores espacios comerciales del mundo.</p>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Legal</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Términos y Condiciones</a></li>
-                        <li><a href="#" class="hover:text-white transition">Privacidad</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Síguenos</h4>
-                    <div class="flex justify-center md:justify-start gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-primary hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-primary hover:text-white transition"><i class="fa-brands fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Contacto</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li>hola@rentyclub.com</li>
-                        <li>+54 11 1234 5678</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-sm text-center">
-                &copy; 2026 RentyClub. Hecho con <i class="fa-solid fa-heart text-red-500"></i>
+            <div class="border-t border-gray-800 mt-16 pt-8 text-center text-xs text-gray-500 uppercase tracking-widest">
+                &copy; 2024 RentyClub Inc. Buenos Aires, Argentina.
             </div>
         </div>
     </footer>
 
-    <div id="cart-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex justify-end backdrop-blur-sm transition-opacity">
-        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="modal-content">
-            <div class="p-6 border-b flex justify-between items-center bg-gray-50">
-                <h2 class="text-xl font-bold text-gray-800">Mi Selección</h2>
-                <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
-            </div>
-            <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
-            <div class="p-6 border-t bg-gray-50">
-                <div class="flex justify-between items-center mb-4 text-sm text-gray-600">
-                    <span>Espacios seleccionados:</span>
-                    <span id="cart-count-summary" class="font-bold text-gray-900">0</span>
-                </div>
-                <button onclick="alert('Redirigiendo a pasarela de pago...')" class="w-full bg-brand-dark text-white py-4 rounded font-bold hover:bg-gray-800 transition flex justify-center items-center gap-2">
-                    Iniciar Solicitud <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="assets/js/app.js"></script>
+    
+    <script>
+        // LÓGICA ESPECÍFICA DEL INDEX
+        let allSpaces = [];
+        let startDateGlobal = null;
+        let endDateGlobal = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // CONFIGURAR DOBLE CALENDARIO (ENTRADA Y SALIDA)
+            const endPicker = flatpickr("#end-date-search", {
+                locale: "es",
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                onChange: (selectedDates) => {
+                    endDateGlobal = selectedDates[0];
+                }
+            });
+
+            flatpickr("#start-date-search", {
+                locale: "es",
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                onChange: (selectedDates, dateStr) => {
+                    startDateGlobal = selectedDates[0];
+                    if (selectedDates.length > 0) {
+                        endPicker.set('minDate', dateStr);
+                        setTimeout(() => endPicker.open(), 100); // Abrir el segundo calendario auto
+                    }
+                }
+            });
+
+            // CARGAR ESPACIOS
+            await loadSpaces();
+        });
+
+        async function loadSpaces() {
+            // Traemos espacios + reservas aprobadas
+            // Asegúrate que tu SupabaseKey esté en app.js
+            const { data, error } = await db
+                .from('spaces')
+                .select('*, bookings(start_date, end_date, status)')
+                .order('created_at', { ascending: false });
+
+            if(data) {
+                allSpaces = data;
+                renderSpaces(data);
+            }
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('spaces-grid').classList.remove('hidden');
+        }
+
+        function renderSpaces(spaces) {
+            const grid = document.getElementById('spaces-grid');
+            grid.innerHTML = '';
+            
+            if(spaces.length === 0) {
+                document.getElementById('no-results').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('no-results').classList.add('hidden');
+            }
+
+            spaces.forEach((space) => {
+                const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 2 }).format(space.price);
+                
+                // Diseño de Tarjeta Minimalista
+                grid.innerHTML += `
+                    <div class="group cursor-pointer block" onclick="window.location.href='product.html?id=${space.id}'">
+                        <div class="aspect-[4/3] w-full overflow-hidden bg-gray-200 mb-4 relative">
+                            <img src="${space.image}" class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/400x300?text=Sin+Imagen'">
+                            ${space.type ? `<span class="absolute top-3 left-3 bg-white text-black text-[10px] font-bold px-2 py-1 uppercase tracking-widest">${space.type}</span>` : ''}
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div class="pr-2 overflow-hidden">
+                                <h3 class="font-serif text-lg text-black truncate">${space.title}</h3>
+                                <p class="mt-1 text-sm text-gray-500 truncate">${space.location}</p>
+                            </div>
+                            <p class="text-sm font-bold text-black whitespace-nowrap">${price} <span class="text-xs font-normal text-gray-400">/día</span></p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // LÓGICA DE FILTRADO (AQUÍ ESTÁ LA ACTUALIZACIÓN CRÍTICA)
+        function filterSpaces() {
+            const locationQuery = document.getElementById('location-input').value.toLowerCase();
+            const typeQuery = document.getElementById('type-input').value; // 'all', 'Local', etc.
+
+            const filtered = allSpaces.filter(space => {
+                // 1. Filtro Ubicación
+                const matchLoc = space.location.toLowerCase().includes(locationQuery) || space.title.toLowerCase().includes(locationQuery);
+                
+                // 2. Filtro Tipo
+                const matchType = typeQuery === 'all' || space.type === typeQuery;
+
+                // 3. Filtro Disponibilidad (Fechas)
+                let isAvailable = true;
+                if (startDateGlobal && endDateGlobal) {
+                    if (space.bookings && space.bookings.length > 0) {
+                        space.bookings.forEach(booking => {
+                            // FILTRO: Si la reserva está APROBADA o BLOQUEADA, ocupa el espacio.
+                            if (booking.status === 'approved' || booking.status === 'blocked') {
+                                const bookStart = new Date(booking.start_date);
+                                const bookEnd = new Date(booking.end_date);
+                                
+                                // Si hay superposición de fechas
+                                if (startDateGlobal <= bookEnd && endDateGlobal >= bookStart) {
+                                    isAvailable = false;
+                                }
+                            }
+                        });
+                    }
+                }
+
+                return matchLoc && matchType && isAvailable;
+            });
+
+            renderSpaces(filtered);
+            document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Función auxiliar para las cards de colección
+        function setTypeAndSearch(type) {
+            document.getElementById('type-input').value = type;
+            filterSpaces();
+        }
+    </script>
 </body>
 </html>

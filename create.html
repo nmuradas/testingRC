@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Publicar Espacio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: { primary: '#0f766e', dark: '#1a1a1a' } } } } }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    
+    <nav class="bg-white shadow p-4 flex justify-between items-center">
+        <a href="index.html" class="font-bold text-xl text-brand-dark">RentyClub</a>
+        <div id="nav-right"></div>
+    </nav>
+
+    <div class="max-w-3xl mx-auto mt-10 p-8 bg-white rounded-lg shadow mb-20">
+        <h1 class="text-2xl font-bold mb-6">Publicar Nuevo Espacio</h1>
+        
+        <form id="create-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-bold text-sm mb-1">Título del anuncio</label>
+                    <input type="text" id="title" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-sm mb-1">Tipo de Espacio</label>
+                    <select id="type" class="w-full p-2 border rounded">
+                        <option>Local Comercial</option>
+                        <option>Oficina Privada</option>
+                        <option>Showroom</option>
+                        <option>Depósito</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 p-4 rounded border border-blue-100">
+                <label class="block font-bold text-sm mb-1 text-blue-900">Ubicación (Dirección)</label>
+                <div class="flex gap-2 mb-3">
+                    <input type="text" id="address-input" class="w-full p-2 border rounded" placeholder="Ej: Av. Corrientes 1234, Buenos Aires">
+                    <button type="button" id="btn-search-map" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700 whitespace-nowrap">
+                        Buscar en Mapa
+                    </button>
+                </div>
+                <div id="map" class="h-64 w-full rounded border border-gray-300 z-0"></div>
+                <p class="text-xs text-gray-500 mt-2">* Verifica que el marcador esté en la posición correcta.</p>
+                
+                <input type="hidden" id="lat">
+                <input type="hidden" id="lng">
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-bold text-sm mb-1">Precio por día ($)</label>
+                    <input type="number" id="price" class="w-full p-2 border rounded" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-sm mb-1">URL de la Imagen</label>
+                    <input type="url" id="image" class="w-full p-2 border rounded" placeholder="https://..." required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-sm mb-1">Descripción</label>
+                <textarea id="description" class="w-full p-2 border rounded h-24" required></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-brand-primary text-white py-4 rounded font-bold hover:bg-teal-700 shadow-lg">
+                Publicar Ahora
+            </button>
+        </form>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // MAPA LOGIC
+        let map, marker;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar mapa en Buenos Aires (Obelisco) por defecto
+            map = L.map('map').setView([-34.6037, -58.3816], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+        });
+
+        document.getElementById('btn-search-map').addEventListener('click', async () => {
+            const query = document.getElementById('address-input').value;
+            if(!query) return;
+
+            // Usar API gratuita de Nominatim (OpenStreetMap)
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const lat = data[0].lat;
+                const lon = data[0].lon;
+
+                // Actualizar inputs ocultos
+                document.getElementById('lat').value = lat;
+                document.getElementById('lng').value = lon;
+
+                // Mover mapa y marcador
+                map.setView([lat, lon], 16);
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup(query)
+                    .openPopup();
+            } else {
+                alert("Dirección no encontrada. Intenta ser más específico.");
+            }
+        });
+
+        // SUBMIT
+        document.getElementById('create-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) { alert("Inicia sesión primero"); return; }
+            const lat = document.getElementById('lat').value;
+            const lng = document.getElementById('lng').value;
+
+            if(!lat || !lng) { alert("Por favor busca la dirección en el mapa para ubicar el local."); return; }
+
+            const newSpace = {
+                owner_id: currentUser.id,
+                title: document.getElementById('title').value,
+                type: document.getElementById('type').value,
+                price: document.getElementById('price').value,
+                location: document.getElementById('address-input').value,
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+                image: document.getElementById('image').value,
+                description: document.getElementById('description').value,
+                tags: ['Nuevo']
+            };
+
+            const { error } = await db.from('spaces').insert(newSpace);
+
+            if (error) {
+                alert("Error: " + error.message);
+            } else {
+                alert("¡Espacio publicado!");
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
