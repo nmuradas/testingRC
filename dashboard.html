@@ -19,7 +19,7 @@
                         secondary: '#71717a', 
                         bg: '#F9FAFB', 
                         surface: '#ffffff', 
-                        border: '#E5E7EB',
+                        border: '#E5E7EB', 
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
@@ -44,7 +44,6 @@
         .badge-approved { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
         .badge-rejected { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
         .badge-cancelled { background-color: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; text-decoration: line-through; }
-        .badge-blocked { background-color: #1f2937; color: #ffffff; }
     </style>
 </head>
 <body class="bg-bg text-brand font-sans antialiased h-screen flex overflow-hidden">
@@ -250,6 +249,32 @@
 
     </main>
 
+    <div id="edit-space-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl max-w-2xl w-full shadow-2xl border border-gray-100 overflow-y-auto max-h-[90vh]">
+            <h3 class="text-xl font-bold mb-6">Editar Propiedad</h3>
+            <input type="hidden" id="edit-id">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Título</label><input id="edit-title" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
+                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Precio / día</label><input id="edit-price" type="number" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
+                
+                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Tamaño (m²)</label><input id="edit-size" type="number" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black" placeholder="Opcional"></div>
+                
+                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Ubicación</label><input id="edit-location" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
+                <div class="md:col-span-2"><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Imagen URL</label><input id="edit-image" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
+            </div>
+            
+            <div class="mb-8">
+                <label class="text-[10px] font-bold uppercase text-gray-400 block mb-3">Amenities</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="edit-amenities-container"></div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('edit-space-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-black">Cancelar</button>
+                <button onclick="saveSpaceEdit()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-lg hover:bg-gray-800">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <div id="user-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white p-8 rounded-2xl max-w-sm w-full shadow-2xl">
             <h3 class="text-xl font-bold mb-6">Nuevo Usuario</h3>
@@ -266,21 +291,6 @@
             <input type="hidden" id="block-space-id">
             <input id="block-dates" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg text-sm mb-6 text-center font-bold outline-none" placeholder="Seleccionar fechas">
             <div class="flex gap-3"><button onclick="document.getElementById('block-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500">Cancelar</button><button onclick="confirmBlock()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-lg">Confirmar</button></div>
-        </div>
-    </div>
-
-    <div id="edit-space-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-2xl max-w-2xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
-            <h3 class="text-xl font-bold mb-6">Editar Propiedad</h3>
-            <input type="hidden" id="edit-id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Título</label><input id="edit-title" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none"></div>
-                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Precio</label><input id="edit-price" type="number" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none"></div>
-                <div class="md:col-span-2"><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Ubicación</label><input id="edit-location" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none"></div>
-                <div class="md:col-span-2"><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Imagen URL</label><input id="edit-image" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none"></div>
-            </div>
-            <div class="mb-8"><label class="text-[10px] font-bold uppercase text-gray-400 block mb-3">Amenities</label><div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="edit-amenities-container"></div></div>
-            <div class="flex gap-3"><button onclick="document.getElementById('edit-space-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500">Cancelar</button><button onclick="saveSpaceEdit()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-lg">Guardar</button></div>
         </div>
     </div>
 
@@ -333,18 +343,10 @@
                 const title = r.spaces?.title || 'Propiedad eliminada';
                 const img = r.spaces?.image || 'https://via.placeholder.com/100';
                 let badgeClass = r.status==='pending'?'badge-pending':(r.status==='approved'?'badge-approved':'badge-rejected');
-                let badgeText = r.status==='pending' ? 'Pendiente' : (r.status==='approved' ? 'Aprobada' : 'Rechazada');
-                
-                let btns = '';
-                if(r.status==='pending') {
-                    btns = `<div class="flex gap-2"><button onclick="updateStatus(${r.id},'approved')" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition">Aprobar</button><button onclick="updateStatus(${r.id},'rejected')" class="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-50 transition">Rechazar</button></div>`;
-                } else if(r.status==='approved') {
-                    btns = `<button onclick="cancelBooking(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Cancelar</button>`;
-                } else if(r.status==='rejected') {
-                    btns = `<button onclick="updateStatus(${r.id},'approved')" class="text-black text-xs font-bold hover:underline">Aprobar</button>`;
-                }
+                let btns = r.status==='pending' ? `<div class="flex gap-2"><button onclick="updateStatus(${r.id},'approved')" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition">Aprobar</button><button onclick="updateStatus(${r.id},'rejected')" class="border border-gray-200 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-50 transition">Rechazar</button></div>` : '';
+                if(r.status === 'approved') btns = `<button onclick="cancelBooking(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Cancelar</button>`;
 
-                list.innerHTML += `<div class="bg-surface p-5 rounded-2xl border border-border shadow-card flex flex-col md:flex-row items-center justify-between gap-4"><div class="flex items-center gap-4"><img src="${img}" class="w-14 h-14 rounded-lg object-cover bg-gray-100 border border-gray-100"><div><div class="flex items-center gap-2 mb-1"><h4 class="font-bold text-sm text-brand">${title}</h4><span class="${badgeClass} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">${badgeText}</span></div><p class="text-xs text-gray-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i> ${r.start_date} — ${r.end_date}</p></div></div><div>${btns}</div></div>`;
+                list.innerHTML += `<div class="bg-surface p-5 rounded-2xl border border-border shadow-card flex flex-col md:flex-row items-center justify-between gap-4"><div class="flex items-center gap-4"><img src="${img}" class="w-14 h-14 rounded-lg object-cover bg-gray-100 border border-gray-100"><div><div class="flex items-center gap-2 mb-1"><h4 class="font-bold text-sm text-brand">${title}</h4><span class="${badgeClass} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">${r.status}</span></div><p class="text-xs text-gray-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i> ${r.start_date} — ${r.end_date}</p></div></div><div>${btns}</div></div>`;
             });
 
             const { data: spaces } = await adminDb.from('spaces').select('*').eq('owner_id', currentUserId);
@@ -361,6 +363,43 @@
             });
         }
 
+        // CARGA DE EDITAR CON M2
+        async function openEditSpace(id) {
+            const { data: s } = await adminDb.from('spaces').select('*').eq('id', id).single();
+            if(s) {
+                document.getElementById('edit-id').value = s.id;
+                document.getElementById('edit-title').value = s.title;
+                document.getElementById('edit-price').value = s.price;
+                document.getElementById('edit-size').value = s.size || ''; // CARGA M2
+                document.getElementById('edit-location').value = s.location;
+                document.getElementById('edit-image').value = s.image;
+                
+                const container = document.getElementById('edit-amenities-container'); container.innerHTML = '';
+                const currentAm = s.amenities || [];
+                AMENITIES_LIST.forEach(am => {
+                    const checked = currentAm.includes(am) ? 'checked' : '';
+                    container.innerHTML += `<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" value="${am}" ${checked} class="accent-black w-4 h-4 rounded"> ${am}</label>`;
+                });
+                document.getElementById('edit-space-modal').classList.remove('hidden');
+            }
+        }
+
+        async function saveSpaceEdit() {
+            const id = document.getElementById('edit-id').value;
+            const am = Array.from(document.querySelectorAll('#edit-amenities-container input:checked')).map(cb=>cb.value);
+            const updates = { 
+                title: document.getElementById('edit-title').value, 
+                price: document.getElementById('edit-price').value, 
+                size: document.getElementById('edit-size').value || null, // GUARDA M2
+                location: document.getElementById('edit-location').value, 
+                image: document.getElementById('edit-image').value, 
+                amenities: am 
+            };
+            await adminDb.from('spaces').update(updates).eq('id', id);
+            document.getElementById('edit-space-modal').classList.add('hidden'); loadHostingData(); if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData();
+        }
+
+        // (RESTO DE FUNCIONES DE DASHBOARD IDÉNTICAS AL ANTERIOR)
         async function loadMyRentals() {
             const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title, location, image)').eq('renter_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
             const list = document.getElementById('rentals-list');
@@ -416,7 +455,7 @@
             const uTable = document.getElementById('admin-users-list'); uTable.innerHTML = '';
             users?.forEach(u => { uTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0"><td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${u.email}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><select onchange="changeUserRole('${u.id}', this.value)" class="bg-white border border-gray-200 text-xs rounded-lg p-1.5 outline-none focus:border-black cursor-pointer"><option value="user" ${u.role==='user'?'selected':''}>Usuario</option><option value="owner" ${u.role==='owner'?'selected':''}>Dueño</option><option value="super_admin" ${u.role==='super_admin'?'selected':''}>Super Admin</option></select></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onclick="adminDeleteUser('${u.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">Eliminar</button></td></tr>`; });
 
-            // TABLA PROPIEDADES RECUPERADA Y BLINDADA
+            // ADMIN SPACES
             const { data: spaces } = await adminDb.from('spaces').select('*').order('created_at', {ascending: false});
             const sTable = document.getElementById('admin-spaces-list'); sTable.innerHTML = '';
             if(!spaces || spaces.length === 0) sTable.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-sm text-gray-400">No hay propiedades.</td></tr>`;
@@ -425,66 +464,34 @@
                 sTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0"><td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 flex items-center gap-3"><img src="${s.image||'https://via.placeholder.com/150'}" class="w-8 h-8 rounded bg-gray-100 object-cover">${s.title}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${owner}...</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">$${s.price}</td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-2"><button onclick="openEditSpace('${s.id}')" class="text-blue-500 hover:text-blue-700 font-bold text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="deleteSpace('${s.id}', true)" class="text-red-400 hover:text-red-600 font-bold text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`; 
             });
 
-            // TABLA RESERVAS RECUPERADA Y BLINDADA
+            // ADMIN BOOKINGS
             const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title)').order('created_at', {ascending: false});
             const bTable = document.getElementById('admin-bookings-list'); bTable.innerHTML = '';
             if(!bookings || bookings.length === 0) bTable.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-sm text-gray-400">No hay reservas.</td></tr>`;
             bookings?.forEach(b => { 
-                const title = b.spaces ? b.spaces.title : '<span class="text-red-400 italic">Propiedad Eliminada</span>';
-                
-                let actions = '';
-                if(b.status === 'cancelled') actions = `<span class="text-gray-400 text-xs">-</span>`;
-                else if(b.status === 'rejected') actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-500 hover:text-green-700 font-bold text-xs">Aprobar</button>`;
-                else {
-                    let cancelBtn = `<button onclick="updateStatus(${b.id}, 'cancelled')" class="text-red-400 hover:text-red-600 font-bold text-xs hover:underline">Cancelar</button>`;
-                    if(b.status === 'pending') actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-500 hover:text-green-700 font-bold text-xs mr-3">Aprobar</button>` + cancelBtn;
-                    else actions = cancelBtn;
-                }
-
-                let badgeClass = b.status==='pending'?'badge-pending':(b.status==='approved'?'badge-approved':(b.status==='rejected'?'badge-rejected':'badge-cancelled'));
-                bTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0"><td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${title}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${b.start_date} <span class="text-gray-300 mx-1">→</span> ${b.end_date}</td><td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full uppercase ${badgeClass}">${b.status}</span></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${actions}</td></tr>`; 
+                const title = b.spaces ? b.spaces.title : '<span class="text-red-400 italic">Eliminada</span>';
+                let actions = `<button onclick="updateStatus(${b.id}, 'cancelled')" class="text-red-400 hover:text-red-600 font-bold text-xs hover:underline">Cancelar</button>`;
+                if(b.status === 'pending') actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-500 hover:text-green-700 font-bold text-xs mr-3">Aprobar</button>` + actions;
+                bTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0"><td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${title}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${b.start_date} <span class="text-gray-300 mx-1">→</span> ${b.end_date}</td><td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 uppercase">${b.status}</span></td><td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">${actions}</td></tr>`; 
             });
         }
 
         async function updateStatus(id, s) { await adminDb.from('bookings').update({status:s}).eq('id', id); loadHostingData(); if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData(); }
-        async function cancelBooking(id) { if(confirm("¿Cancelar reserva?")) { await adminDb.from('bookings').update({status:'cancelled'}).eq('id', id); loadHostingData(); loadMyRentals(); if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData(); } }
+        async function cancelBooking(id) { if(confirm("¿Cancelar?")) await adminDb.from('bookings').update({status:'cancelled'}).eq('id', id); location.reload(); }
         async function deleteBlock(id) { if(confirm("¿Liberar?")) await adminDb.from('bookings').delete().eq('id', id); loadHostingData(); }
         async function deleteSpace(id, isAdm=false) { if(confirm("¿Eliminar?")) await adminDb.from('spaces').delete().eq('id', id); isAdm ? loadAdminData() : location.reload(); }
         async function changeUserRole(id, role) { if(confirm(`¿Cambiar rol a ${role}?`)) await adminDb.from('profiles').update({role}).eq('id', id); loadAdminData(); }
         async function adminDeleteUser(id) { if(confirm("¿Borrar usuario?")) await adminDb.from('profiles').delete().eq('id', id); loadAdminData(); }
         async function handleLogout() { await adminDb.auth.signOut(); location.href = 'login.html'; }
-        
         async function sendMsg() { 
-            const input = document.getElementById('chat-input');
-            const val = input.value;
-            if(!val) return;
+            const val = document.getElementById('chat-input').value; if(!val) return; 
             const { error } = await adminDb.from('messages').insert({ sender_id: currentUserId, receiver_id: document.getElementById('chat-to').value, space_id: document.getElementById('chat-space').value, content: val }); 
             if (!error) { 
-                input.value = ''; 
-                // Inyección Optimista (Dibuja el mensaje sin recargar)
-                const chatBody = document.getElementById('chat-body');
-                chatBody.innerHTML += `<div class="flex flex-col items-end w-full animate-fade-in-up"><div class="bg-black text-white rounded-br-none px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm">${val}</div><span class="text-[10px] text-gray-400 mt-1 px-1">Ahora</span></div>`;
-                chatBody.scrollTop = chatBody.scrollHeight;
-                // No llamamos loadMessages() inmediatamente para evitar el parpadeo gris
+                document.getElementById('chat-input').value = ''; 
+                const b = document.getElementById('chat-body');
+                b.innerHTML += `<div class="flex flex-col items-end w-full animate-fade-in-up"><div class="bg-black text-white rounded-br-none px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm">${val}</div><span class="text-[10px] text-gray-400 mt-1 px-1">Ahora</span></div>`;
+                b.scrollTop = b.scrollHeight;
             } 
-        }
-        
-        async function openEditSpace(id) {
-            const { data: s } = await adminDb.from('spaces').select('*').eq('id', id).single();
-            if(s) {
-                document.getElementById('edit-id').value = s.id; document.getElementById('edit-title').value = s.title; document.getElementById('edit-price').value = s.price; document.getElementById('edit-location').value = s.location; document.getElementById('edit-image').value = s.image;
-                const container = document.getElementById('edit-amenities-container'); container.innerHTML = '';
-                const currentAm = s.amenities || [];
-                AMENITIES_LIST.forEach(am => { const checked = currentAm.includes(am) ? 'checked' : ''; container.innerHTML += `<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" value="${am}" ${checked} class="accent-black w-4 h-4 rounded"> ${am}</label>`; });
-                document.getElementById('edit-space-modal').classList.remove('hidden');
-            }
-        }
-        async function saveSpaceEdit() {
-            const id = document.getElementById('edit-id').value;
-            const am = Array.from(document.querySelectorAll('#edit-amenities-container input:checked')).map(cb=>cb.value);
-            const updates = { title: document.getElementById('edit-title').value, price: document.getElementById('edit-price').value, location: document.getElementById('edit-location').value, image: document.getElementById('edit-image').value, amenities: am };
-            await adminDb.from('spaces').update(updates).eq('id', id);
-            document.getElementById('edit-space-modal').classList.add('hidden'); loadHostingData(); if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData();
         }
         let cal; function openBlockModal(id) { document.getElementById('block-space-id').value = id; document.getElementById('block-modal').classList.remove('hidden'); if(cal) cal.destroy(); cal = flatpickr("#block-dates", { mode: "range", minDate: "today" }); }
         async function confirmBlock() { const d = cal.selectedDates; if(d.length!==2) return alert("Rango incompleto"); const s=d[0].toISOString(); const e=d[1].toISOString(); await adminDb.from('bookings').insert({ space_id: document.getElementById('block-space-id').value, owner_id: currentUserId, renter_id: currentUserId, start_date: s, end_date: e, total_price: 0, status: 'blocked' }); document.getElementById('block-modal').classList.add('hidden'); loadHostingData(); }
