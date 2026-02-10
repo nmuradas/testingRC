@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
         tailwind.config = {
@@ -44,6 +46,9 @@
         .badge-approved { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
         .badge-rejected { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
         .badge-cancelled { background-color: #F3F4F6; color: #6B7280; border: 1px solid #E5E7EB; text-decoration: line-through; }
+        
+        /* Mapa en Modal */
+        #edit-map { height: 200px; width: 100%; border-radius: 0.5rem; z-index: 0; }
     </style>
 </head>
 <body class="bg-bg text-brand font-sans antialiased h-screen flex overflow-hidden">
@@ -256,11 +261,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Título</label><input id="edit-title" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
                 <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Precio / día</label><input id="edit-price" type="number" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
-                
                 <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Tamaño (m²)</label><input id="edit-size" type="number" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black" placeholder="Opcional"></div>
-                
-                <div><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Ubicación</label><input id="edit-location" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
                 <div class="md:col-span-2"><label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Imagen URL</label><input id="edit-image" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black"></div>
+                
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-bold uppercase text-gray-400 block mb-1">Ubicación</label>
+                    <div class="flex gap-2 mb-2">
+                        <input id="edit-location" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black">
+                        <button onclick="searchEditMap()" class="bg-black text-white px-4 rounded-lg text-xs font-bold hover:opacity-80">Buscar</button>
+                    </div>
+                    <div id="edit-map" class="border border-gray-200"></div>
+                    <input type="hidden" id="edit-lat"><input type="hidden" id="edit-lng">
+                </div>
             </div>
             
             <div class="mb-8">
@@ -299,6 +311,7 @@
         const adminDb = supabase.createClient('https://pmedrqauhesybkzxraxd.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I');
         let currentUserId = null;
         const AMENITIES_LIST = ["Seguridad 24hs", "Calefacción", "Baño privado", "Cocina", "Cochera", "Vidriera", "Aire Acondicionado", "WiFi"];
+        let editMap, editMarker;
 
         document.addEventListener('DOMContentLoaded', async () => {
             setTimeout(async () => {
@@ -363,14 +376,13 @@
             });
         }
 
-        // CARGA DE EDITAR CON M2
         async function openEditSpace(id) {
             const { data: s } = await adminDb.from('spaces').select('*').eq('id', id).single();
             if(s) {
                 document.getElementById('edit-id').value = s.id;
                 document.getElementById('edit-title').value = s.title;
                 document.getElementById('edit-price').value = s.price;
-                document.getElementById('edit-size').value = s.size || ''; // CARGA M2
+                document.getElementById('edit-size').value = s.size || '';
                 document.getElementById('edit-location').value = s.location;
                 document.getElementById('edit-image').value = s.image;
                 
@@ -380,8 +392,45 @@
                     const checked = currentAm.includes(am) ? 'checked' : '';
                     container.innerHTML += `<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" value="${am}" ${checked} class="accent-black w-4 h-4 rounded"> ${am}</label>`;
                 });
+                
+                // Mostrar Modal
                 document.getElementById('edit-space-modal').classList.remove('hidden');
+                
+                // Iniciar Mapa (Retraso breve para renderizado)
+                setTimeout(() => {
+                    if (!editMap) {
+                        editMap = L.map('edit-map').setView([-34.6037, -58.3816], 13);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                            attribution: '&copy; OpenStreetMap &copy; CARTO'
+                        }).addTo(editMap);
+                        editMap.on('click', (e) => {
+                            if (editMarker) editMap.removeLayer(editMarker);
+                            editMarker = L.marker(e.latlng).addTo(editMap);
+                        });
+                    }
+                    editMap.invalidateSize();
+                    searchEditMap(true); // Auto-ubicar si ya hay dirección
+                }, 200);
             }
+        }
+
+        async function searchEditMap(isInit = false) {
+            const query = document.getElementById('edit-location').value;
+            if(!query) return;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if(data && data.length > 0) {
+                    const lat = data[0].lat; const lon = data[0].lon;
+                    if(editMap) {
+                        editMap.setView([lat, lon], 16);
+                        if(editMarker) editMap.removeLayer(editMarker);
+                        editMarker = L.marker([lat, lon]).addTo(editMap).bindPopup(query).openPopup();
+                    }
+                } else if(!isInit) {
+                    alert("Dirección no encontrada en el mapa.");
+                }
+            } catch(e) { console.error(e); }
         }
 
         async function saveSpaceEdit() {
@@ -390,7 +439,7 @@
             const updates = { 
                 title: document.getElementById('edit-title').value, 
                 price: document.getElementById('edit-price').value, 
-                size: document.getElementById('edit-size').value || null, // GUARDA M2
+                size: document.getElementById('edit-size').value || null,
                 location: document.getElementById('edit-location').value, 
                 image: document.getElementById('edit-image').value, 
                 amenities: am 
@@ -399,7 +448,7 @@
             document.getElementById('edit-space-modal').classList.add('hidden'); loadHostingData(); if(!document.getElementById('view-admin').classList.contains('hidden')) loadAdminData();
         }
 
-        // (RESTO DE FUNCIONES DE DASHBOARD IDÉNTICAS AL ANTERIOR)
+        // ... (RESTO DE FUNCIONES IGUAL) ...
         async function loadMyRentals() {
             const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title, location, image)').eq('renter_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
             const list = document.getElementById('rentals-list');
