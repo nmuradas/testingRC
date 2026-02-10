@@ -5,21 +5,43 @@
     <title>Publicar Espacio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/renty.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { brand: { primary: '#0f766e', dark: '#1a1a1a' } } } } }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#111111',
+                        white: '#ffffff',
+                        offwhite: '#F9F9F9'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
     </script>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-offwhite font-sans antialiased">
     
-    <nav class="bg-white shadow p-4 flex justify-between items-center">
-        <a href="index.html" class="font-bold text-xl text-brand-dark">RentyClub</a>
-        <div id="nav-right"></div>
+    <nav class="bg-white fixed w-full z-50 top-0 border-b border-gray-100 h-20 flex items-center">
+        <div class="container mx-auto px-6 flex justify-between items-center w-full">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 bg-black text-white flex items-center justify-center font-serif text-xl italic">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight text-black">RentyClub</span>
+            </a>
+            <div id="nav-right" class="flex items-center gap-8"></div>
+        </div>
     </nav>
 
-    <div class="max-w-3xl mx-auto mt-10 p-8 bg-white rounded-lg shadow mb-20">
-        <h1 class="text-2xl font-bold mb-6">Publicar Nuevo Espacio</h1>
+    <div class="max-w-3xl mx-auto pt-28 px-6 pb-16">
+        <div class="bg-white p-8 md:p-10 shadow-2xl border border-gray-100 rc-hover-lift">
+            <h1 class="text-3xl font-serif font-bold mb-8 text-black">Publicar Nuevo Espacio</h1>
         
         <form id="create-form" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -38,11 +60,11 @@
                 </div>
             </div>
 
-            <div class="bg-blue-50 p-4 rounded border border-blue-100">
-                <label class="block font-bold text-sm mb-1 text-blue-900">Ubicación (Dirección)</label>
+            <div class="bg-offwhite p-4 border border-gray-100">
+                <label class="block font-bold text-sm mb-1 text-black">Ubicación (Dirección)</label>
                 <div class="flex gap-2 mb-3">
                     <input type="text" id="address-input" class="w-full p-2 border rounded" placeholder="Ej: Av. Corrientes 1234, Buenos Aires">
-                    <button type="button" id="btn-search-map" class="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700 whitespace-nowrap">
+                    <button type="button" id="btn-search-map" class="bg-black text-white px-4 py-2 rounded-sm font-bold hover:bg-gray-800 whitespace-nowrap uppercase tracking-widest text-xs">
                         Buscar en Mapa
                     </button>
                 </div>
@@ -69,10 +91,11 @@
                 <textarea id="description" class="w-full p-2 border rounded h-24" required></textarea>
             </div>
 
-            <button type="submit" class="w-full bg-brand-primary text-white py-4 rounded font-bold hover:bg-teal-700 shadow-lg">
+            <button type="submit" class="w-full bg-black text-white py-4 rounded-sm font-bold hover:bg-gray-800 shadow-lg uppercase tracking-widest text-xs">
                 Publicar Ahora
             </button>
         </form>
+        </div>
     </div>
 
     <script src="assets/js/app.js"></script>

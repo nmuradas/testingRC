@@ -6,26 +6,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/renty.css">
     <script>
-        tailwind.config = { theme: { extend: { colors: { brand: { dark: '#111', primary: '#111' } } } } }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { black: '#111111', white: '#ffffff', offwhite: '#F9F9F9' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
     </script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="bg-offwhite font-sans text-gray-800 antialiased">
 
-    <nav class="bg-black text-white p-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <a href="index.html" class="font-bold text-xl">RentyClub</a>
-            <span class="text-gray-500">|</span>
-            <span class="text-gray-300 font-medium">Mi Perfil</span>
-        </div>
-        <div class="flex gap-4">
-            <a href="dashboard.html" class="hover:text-gray-300 text-sm font-bold">Ir al Dashboard</a>
+    <nav class="bg-white fixed w-full z-50 top-0 border-b border-gray-100 h-20 flex items-center">
+        <div class="container mx-auto px-6 flex justify-between items-center w-full">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 bg-black text-white flex items-center justify-center font-serif text-xl italic">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight text-black">RentyClub</span>
+            </a>
+            <div id="nav-right" class="flex items-center gap-8"></div>
         </div>
     </nav>
 
-    <div class="container mx-auto p-6 max-w-2xl mt-10">
-        <div class="bg-white rounded-xl shadow p-8">
+    <div class="container mx-auto px-6 pt-28 pb-16 max-w-2xl">
+        <h1 class="font-serif text-3xl font-bold text-black mb-8">Mi Perfil</h1>
+        <div class="bg-white shadow-2xl border border-gray-100 p-8 rc-hover-lift">
             <div class="flex items-center gap-6 mb-8">
                 <div class="w-20 h-20 bg-black text-white rounded-full flex items-center justify-center text-3xl font-bold border-2 border-gray-200 overflow-hidden" id="avatar-placeholder">
                     <i class="fa-solid fa-user"></i>

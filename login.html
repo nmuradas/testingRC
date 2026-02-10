@@ -7,43 +7,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/renty.css">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { brand: { dark: '#1a1a1a', primary: '#0f766e' } },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    colors: {
+                        black: '#111111',
+                        white: '#ffffff',
+                        offwhite: '#F9F9F9'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center font-sans">
+<body class="bg-offwhite min-h-screen flex items-center justify-center font-sans antialiased">
 
-    <div class="bg-white p-10 rounded-xl shadow-2xl w-full max-w-md relative">
-        <a href="index.html" class="absolute top-4 left-4 text-gray-400 hover:text-brand-primary text-sm">
+    <div class="bg-white p-10 shadow-2xl w-full max-w-md relative border border-gray-100 rc-hover-lift">
+        <a href="index.html" class="absolute top-4 left-4 text-gray-400 hover:text-black text-sm">
             <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
 
         <div class="text-center mb-8 mt-4">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded bg-brand-dark text-white text-xl font-bold mb-4">R</div>
-            <h2 id="form-title" class="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-black text-white text-xl font-serif italic mb-4">R</div>
+            <h2 id="form-title" class="text-3xl font-serif font-bold text-black">Iniciar Sesión</h2>
             <p id="form-subtitle" class="text-gray-500 text-sm">Ingresa a tu cuenta para gestionar reservas</p>
         </div>
 
         <form id="auth-form" class="space-y-5">
             <div id="name-field" class="hidden">
                 <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo</label>
-                <input type="text" id="full-name" class="w-full p-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="Ej: Juan Pérez">
+                <input type="text" id="full-name" class="w-full p-3 border border-gray-300 rounded-sm outline-none transition" placeholder="Ej: Juan Pérez">
             </div>
 
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
                 <div class="relative">
                     <i class="fa-solid fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
-                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="hola@ejemplo.com" required>
+                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-sm outline-none transition" placeholder="hola@ejemplo.com" required>
                 </div>
             </div>
 
@@ -51,14 +59,14 @@
                 <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
                 <div class="relative">
                     <i class="fa-solid fa-lock absolute left-3 top-3.5 text-gray-400"></i>
-                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded focus:border-brand-primary outline-none transition" placeholder="••••••••" required>
+                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-sm outline-none transition" placeholder="••••••••" required>
                 </div>
             </div>
 
             <div id="error-msg" class="hidden bg-red-50 text-red-500 text-sm p-3 rounded border border-red-200 text-center"></div>
             <div id="success-msg" class="hidden bg-green-50 text-green-600 text-sm p-3 rounded border border-green-200 text-center"></div>
 
-            <button type="submit" id="submit-btn" class="w-full bg-brand-primary text-white font-bold py-3 rounded hover:bg-teal-700 transition shadow-lg">
+            <button type="submit" id="submit-btn" class="w-full bg-black text-white font-bold py-3 rounded-sm hover:bg-gray-800 transition shadow-lg uppercase tracking-widest text-xs">
                 Ingresar
             </button>
         </form>
@@ -66,7 +74,7 @@
         <div class="mt-6 text-center text-sm">
             <p id="toggle-text" class="text-gray-500">
                 ¿No tienes cuenta? 
-                <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Regístrate aquí</button>
+                <button onclick="toggleMode()" class="text-black font-bold hover:underline">Regístrate aquí</button>
             </p>
         </div>
     </div>
@@ -104,13 +112,13 @@
                 formTitle.innerText = "Iniciar Sesión";
                 formSubtitle.innerText = "Ingresa a tu cuenta para gestionar reservas";
                 submitBtn.innerText = "Ingresar";
-                toggleText.innerHTML = `¿No tienes cuenta? <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Regístrate aquí</button>`;
+                toggleText.innerHTML = `¿No tienes cuenta? <button onclick="toggleMode()" class="text-black font-bold hover:underline">Regístrate aquí</button>`;
             } else {
                 nameField.classList.remove('hidden');
                 formTitle.innerText = "Crear Cuenta";
                 formSubtitle.innerText = "Únete a la comunidad de RentyClub";
                 submitBtn.innerText = "Registrarme";
-                toggleText.innerHTML = `¿Ya tienes cuenta? <button onclick="toggleMode()" class="text-brand-primary font-bold hover:underline">Inicia sesión</button>`;
+                toggleText.innerHTML = `¿Ya tienes cuenta? <button onclick="toggleMode()" class="text-black font-bold hover:underline">Inicia sesión</button>`;
             }
         }
 
