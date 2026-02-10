@@ -5,173 +5,202 @@
     <title>Panel - Renty Club</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { black: '#0F0F0F', graybg: '#FAFAFA' },
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] }
+                    colors: {
+                        background: 'rgb(255, 255, 255)', // Blanco puro
+                        foreground: 'rgb(10, 10, 10)',    // Negro casi puro
+                        border: 'rgb(229, 229, 229)',     // Gris borde exacto
+                        muted: 'rgb(244, 244, 245)',      // Gris fondo suave (Zinc-100)
+                        'muted-fg': 'rgb(113, 113, 122)', // Gris texto (Zinc-500)
+                    },
+                    borderRadius: {
+                        DEFAULT: '0.5rem', // 8px (Estándar Base44)
+                        'lg': '0.5rem',
+                        'xl': '0.75rem',
+                        '2xl': '0.5rem', // Forzamos a que no sea tan redondo
+                        '3xl': '0.5rem'  // Forzamos a que no sea tan redondo
+                    },
+                    fontFamily: {
+                        sans: ['ui-sans-serif', 'system-ui', 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"]
+                    },
+                    boxShadow: {
+                        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+                    }
                 }
             }
         }
     </script>
+    <style>
+        /* Ajuste fino para inputs y selects estilo sistema */
+        input, select, textarea { outline: none; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid rgb(10,10,10); outline-offset: -1px; }
+        .view-section { animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
-<body class="bg-graybg text-black font-sans antialiased h-screen flex overflow-hidden">
+<body class="bg-background text-foreground font-sans antialiased h-screen flex overflow-hidden selection:bg-black selection:text-white">
 
-    <aside class="w-64 bg-white border-r border-gray-100 flex flex-col justify-between hidden md:flex shrink-0">
+    <aside class="w-64 bg-background border-r border-border flex flex-col justify-between hidden md:flex shrink-0">
         <div>
-            <div class="h-20 flex items-center px-8 border-b border-gray-50">
-                <a href="index.html" class="font-serif text-xl font-bold tracking-tight">RentyClub</a>
+            <div class="h-16 flex items-center px-6 border-b border-border">
+                <a href="index.html" class="font-bold text-lg tracking-tight flex items-center gap-2">
+                    <div class="w-6 h-6 bg-foreground text-background rounded flex items-center justify-center text-xs font-bold">R</div>
+                    RentyClub
+                </a>
             </div>
             
-            <nav class="p-4 space-y-1 mt-4">
-                <p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Principal</p>
-                <button onclick="switchTab('hosting')" id="btn-hosting" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-black text-white transition-all shadow-md">
-                    <i class="fa-solid fa-store w-5"></i> Mis Propiedades
+            <nav class="p-4 space-y-1">
+                <p class="px-2 text-[11px] font-semibold text-muted-fg uppercase tracking-wider mb-2 mt-4">Principal</p>
+                <button onclick="switchTab('hosting')" id="btn-hosting" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors bg-foreground text-background">
+                    <i class="fa-solid fa-store w-4 text-center"></i> Mis Propiedades
                 </button>
-                <button onclick="switchTab('rentals')" id="btn-rentals" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-black transition-all">
-                    <i class="fa-solid fa-ticket w-5"></i> Mis Viajes
+                <button onclick="switchTab('rentals')" id="btn-rentals" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-muted-fg hover:bg-muted hover:text-foreground transition-colors">
+                    <i class="fa-solid fa-ticket w-4 text-center"></i> Mis Viajes
                 </button>
-                <button onclick="switchTab('messages')" id="btn-messages" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-black transition-all">
-                    <i class="fa-solid fa-comment-dots w-5"></i> Mensajes
+                <button onclick="switchTab('messages')" id="btn-messages" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-muted-fg hover:bg-muted hover:text-foreground transition-colors">
+                    <i class="fa-solid fa-comment-dots w-4 text-center"></i> Mensajes
                 </button>
 
-                <div id="admin-menu" class="hidden mt-8 pt-8 border-t border-gray-50">
-                    <p class="px-4 text-[10px] font-bold text-red-400 uppercase tracking-widest mb-2">Administración</p>
-                    <button onclick="switchTab('admin')" id="btn-admin" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all">
-                        <i class="fa-solid fa-shield-halved w-5"></i> Panel Maestro
+                <div id="admin-menu" class="hidden mt-6 pt-4 border-t border-border">
+                    <p class="px-2 text-[11px] font-semibold text-muted-fg uppercase tracking-wider mb-2">Administración</p>
+                    <button onclick="switchTab('admin')" id="btn-admin" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 transition-colors">
+                        <i class="fa-solid fa-shield-halved w-4 text-center"></i> Panel Maestro
                     </button>
                 </div>
             </nav>
         </div>
 
-        <div class="p-4 border-t border-gray-50">
-            <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-gray-400 hover:text-red-500 transition-all">
-                <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Cerrar Sesión
+        <div class="p-4 border-t border-border">
+            <button onclick="handleLogout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md text-muted-fg hover:text-red-600 hover:bg-red-50 transition-colors">
+                <i class="fa-solid fa-arrow-right-from-bracket w-4"></i> Cerrar Sesión
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 overflow-y-auto p-4 md:p-10 relative bg-graybg">
+    <main class="flex-1 overflow-y-auto bg-white p-6 md:p-10 relative">
         
-        <div class="md:hidden flex justify-between items-center mb-6">
-            <a href="index.html" class="font-serif font-bold text-xl">Renty</a>
+        <div class="md:hidden flex justify-between items-center mb-6 border-b border-border pb-4">
+            <a href="index.html" class="font-bold text-xl">RentyClub</a>
             <button onclick="handleLogout()" class="text-xs font-bold text-red-500">Salir</button>
         </div>
 
-        <div id="view-hosting" class="view-section animate-fade-in">
+        <div id="view-hosting" class="view-section">
             <div class="flex justify-between items-end mb-8">
                 <div>
-                    <h1 class="font-serif text-3xl font-bold">Panel de Anfitrión</h1>
-                    <p class="text-gray-400 text-sm mt-1">Gestiona tus espacios y solicitudes.</p>
+                    <h1 class="text-2xl font-bold tracking-tight">Panel de Anfitrión</h1>
+                    <p class="text-muted-fg text-sm mt-1">Gestiona tus espacios y solicitudes.</p>
                 </div>
-                <a href="create.html" class="bg-black hover:bg-gray-800 text-white px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition shadow-lg flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Publicar
+                <a href="create.html" class="bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-xs"></i> Publicar
                 </a>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2">
-                    <h3 class="font-bold text-sm uppercase text-gray-400 tracking-wider mb-4">Solicitudes Recientes</h3>
-                    <div id="requests-list" class="space-y-4">
-                        <p class="text-gray-400 text-sm italic">Cargando...</p>
+                    <h3 class="font-semibold text-sm mb-4">Solicitudes Recientes</h3>
+                    <div id="requests-list" class="space-y-3">
+                        <p class="text-muted-fg text-sm text-center py-8 border border-dashed border-border rounded-md">Cargando...</p>
                     </div>
                 </div>
                 
                 <div>
-                    <h3 class="font-bold text-sm uppercase text-gray-400 tracking-wider mb-4">Mis Espacios</h3>
-                    <div id="my-spaces-list" class="space-y-4">
-                        <p class="text-gray-400 text-sm italic">Cargando...</p>
+                    <h3 class="font-semibold text-sm mb-4">Mis Espacios</h3>
+                    <div id="my-spaces-list" class="space-y-3">
+                        <p class="text-muted-fg text-sm text-center py-8 border border-dashed border-border rounded-md">Cargando...</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="view-rentals" class="view-section hidden animate-fade-in">
-            <h1 class="font-serif text-3xl font-bold mb-8">Mis Reservas</h1>
+        <div id="view-rentals" class="view-section hidden">
+            <h1 class="text-2xl font-bold tracking-tight mb-8">Mis Reservas</h1>
             <div id="rentals-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <p class="text-gray-400 text-sm italic">Cargando...</p>
+                <p class="text-muted-fg text-sm">Cargando...</p>
             </div>
         </div>
 
-        <div id="view-messages" class="view-section hidden animate-fade-in h-full flex flex-col">
+        <div id="view-messages" class="view-section hidden h-full flex flex-col">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="font-serif text-3xl font-bold">Mensajes</h1>
-                <button onclick="loadMessages()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i class="fa-solid fa-rotate-right text-xs"></i></button>
+                <h1 class="text-2xl font-bold tracking-tight">Mensajes</h1>
+                <button onclick="loadMessages()" class="w-8 h-8 rounded-md border border-border flex items-center justify-center hover:bg-muted"><i class="fa-solid fa-rotate-right text-xs"></i></button>
             </div>
             <div id="threads-list" class="space-y-2">
-                <p class="text-gray-400 text-sm italic">Cargando...</p>
+                <p class="text-muted-fg text-sm">Cargando...</p>
             </div>
         </div>
 
-        <div id="view-admin" class="view-section hidden animate-fade-in">
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+        <div id="view-admin" class="view-section hidden">
+            <div class="bg-white rounded-lg border border-border p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-8">
-                    <h2 class="font-serif text-3xl font-bold text-red-600">Super Admin</h2>
-                    <button onclick="loadAdminData()" class="text-xs font-bold bg-gray-100 border px-3 py-1 rounded hover:bg-gray-200">Refrescar Datos</button>
+                    <h2 class="text-2xl font-bold tracking-tight text-foreground">Super Admin</h2>
+                    <button onclick="loadAdminData()" class="text-xs font-medium bg-white border border-border px-3 py-1.5 rounded-md hover:bg-muted transition">Refrescar Datos</button>
                 </div>
                 
-                <div class="grid grid-cols-3 gap-6 mb-12">
-                    <div class="bg-black text-white p-6 rounded-2xl"><p class="text-xs uppercase opacity-60 mb-1">Usuarios</p><p id="kpi-users" class="text-4xl font-serif">0</p></div>
-                    <div class="bg-gray-50 border border-gray-100 p-6 rounded-2xl"><p class="text-xs uppercase text-gray-400 mb-1">Propiedades</p><p id="kpi-spaces" class="text-4xl font-serif">0</p></div>
-                    <div class="bg-gray-50 border border-gray-100 p-6 rounded-2xl"><p class="text-xs uppercase text-gray-400 mb-1">Reservas</p><p id="kpi-bookings" class="text-4xl font-serif">0</p></div>
+                <div class="grid grid-cols-3 gap-4 mb-10">
+                    <div class="bg-foreground text-background p-5 rounded-md"><p class="text-xs font-medium opacity-70 mb-1 uppercase tracking-wide">Usuarios</p><p id="kpi-users" class="text-3xl font-bold">0</p></div>
+                    <div class="bg-white border border-border p-5 rounded-md"><p class="text-xs font-medium text-muted-fg mb-1 uppercase tracking-wide">Propiedades</p><p id="kpi-spaces" class="text-3xl font-bold">0</p></div>
+                    <div class="bg-white border border-border p-5 rounded-md"><p class="text-xs font-medium text-muted-fg mb-1 uppercase tracking-wide">Reservas</p><p id="kpi-bookings" class="text-3xl font-bold">0</p></div>
                 </div>
 
-                <div class="space-y-12">
+                <div class="space-y-10">
                     
                     <div>
-                        <div class="flex justify-between items-end mb-4">
-                            <h3 class="font-bold text-sm uppercase tracking-wide text-gray-500">Gestión de Usuarios</h3>
-                            <button onclick="document.getElementById('user-modal').classList.remove('hidden')" class="bg-black text-white text-xs px-3 py-1.5 rounded font-bold hover:bg-gray-800">+ Nuevo Usuario</button>
+                        <div class="flex justify-between items-end mb-3">
+                            <h3 class="font-semibold text-sm">Gestión de Usuarios</h3>
+                            <button onclick="document.getElementById('user-modal').classList.remove('hidden')" class="bg-white border border-border text-foreground text-xs px-3 py-1.5 rounded-md font-medium hover:bg-muted transition">+ Nuevo</button>
                         </div>
-                        <div class="overflow-hidden border border-gray-200 rounded-xl w-full">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
-                                <thead class="bg-gray-100 w-full">
+                        <div class="border border-border rounded-md overflow-hidden">
+                            <table class="min-w-full divide-y divide-border">
+                                <thead class="bg-muted">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Rol</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Email</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Rol</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-muted-fg uppercase tracking-wider">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-users-list" class="bg-white divide-y divide-gray-200"></tbody>
+                                <tbody id="admin-users-list" class="bg-white divide-y divide-border"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <div>
-                        <h3 class="font-bold mb-4 text-sm uppercase tracking-wide text-gray-500">Gestión de Propiedades</h3>
-                        <div class="overflow-hidden border border-gray-200 rounded-xl max-h-96 overflow-y-auto w-full">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
-                                <thead class="bg-gray-100 sticky top-0 z-10 w-full">
+                        <h3 class="font-semibold text-sm mb-3">Gestión de Propiedades</h3>
+                        <div class="border border-border rounded-md overflow-hidden max-h-96 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-border">
+                                <thead class="bg-muted sticky top-0 z-10">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Propiedad</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Dueño ID</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Precio</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acción</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Propiedad</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Dueño ID</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Precio</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-muted-fg uppercase tracking-wider">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-spaces-list" class="bg-white divide-y divide-gray-200"></tbody>
+                                <tbody id="admin-spaces-list" class="bg-white divide-y divide-border"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <div>
-                        <h3 class="font-bold mb-4 text-sm uppercase tracking-wide text-gray-500">Todas las Reservas</h3>
-                        <div class="overflow-hidden border border-gray-200 rounded-xl max-h-96 overflow-y-auto w-full">
-                            <table class="min-w-full divide-y divide-gray-200 w-full">
-                                <thead class="bg-gray-100 sticky top-0 z-10 w-full">
+                        <h3 class="font-semibold text-sm mb-3">Todas las Reservas</h3>
+                        <div class="border border-border rounded-md overflow-hidden max-h-96 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-border">
+                                <thead class="bg-muted sticky top-0 z-10">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Propiedad</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Fechas</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Estado</th>
-                                        <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acción</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Propiedad</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Fechas</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-muted-fg uppercase tracking-wider">Estado</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-muted-fg uppercase tracking-wider">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-bookings-list" class="bg-white divide-y divide-gray-200"></tbody>
+                                <tbody id="admin-bookings-list" class="bg-white divide-y divide-border"></tbody>
                             </table>
                         </div>
                     </div>
@@ -182,62 +211,64 @@
 
     </main>
 
-    <div id="chat-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg h-[650px] flex flex-col rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
-            <div class="bg-white p-4 border-b flex justify-between items-center z-10 shadow-sm">
+    <div id="chat-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-full max-w-lg h-[600px] flex flex-col rounded-lg shadow-xl border border-border overflow-hidden">
+            <div class="bg-white p-4 border-b border-border flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-black rounded-full text-white flex items-center justify-center text-sm"><i class="fa-solid fa-user"></i></div>
-                    <div><h3 class="font-bold text-sm" id="chat-header">User</h3><p class="text-[10px] text-gray-400 uppercase tracking-wide" id="chat-subheader">Space</p></div>
+                    <div class="w-8 h-8 bg-foreground text-background rounded flex items-center justify-center text-xs"><i class="fa-solid fa-user"></i></div>
+                    <div><h3 class="font-bold text-sm text-foreground" id="chat-header">User</h3><p class="text-[10px] text-muted-fg uppercase" id="chat-subheader">Space</p></div>
                 </div>
-                <button onclick="document.getElementById('chat-modal').classList.add('hidden')" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="document.getElementById('chat-modal').classList.add('hidden')" class="text-muted-fg hover:text-foreground transition"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div id="chat-body" class="flex-1 overflow-y-auto p-6 space-y-3 bg-[#F2F2F2]"></div>
-            <div class="p-4 bg-white border-t flex gap-2">
+            <div id="chat-body" class="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/50"></div>
+            <div class="p-3 bg-white border-t border-border flex gap-2">
                 <input type="hidden" id="chat-to"><input type="hidden" id="chat-space">
-                <input id="chat-input" class="flex-1 bg-gray-100 border-none px-4 py-3 rounded-full text-sm focus:ring-1 focus:ring-black outline-none" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter') sendMsg()">
-                <button onclick="sendMsg()" class="w-11 h-11 bg-black text-white rounded-full flex items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                <input id="chat-input" class="flex-1 bg-white border border-border px-3 py-2 rounded-md text-sm focus:border-foreground" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter') sendMsg()">
+                <button onclick="sendMsg()" class="w-9 h-9 bg-foreground text-background rounded-md flex items-center justify-center hover:opacity-90 transition"><i class="fa-solid fa-paper-plane text-xs"></i></button>
             </div>
         </div>
     </div>
 
-    <div id="block-modal" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl max-w-sm w-full shadow-2xl">
-            <h3 class="text-xl font-serif font-bold mb-2">Bloquear Fechas</h3>
-            <p class="text-xs text-gray-500 mb-6">Selecciona el rango de días no disponibles.</p>
+    <div id="block-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-lg max-w-sm w-full shadow-xl border border-border">
+            <h3 class="text-lg font-bold mb-1">Bloquear Fechas</h3>
+            <p class="text-xs text-muted-fg mb-4">Selecciona el rango no disponible.</p>
             <input type="hidden" id="block-space-id">
-            <input id="block-dates" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl font-bold mb-6 text-sm text-center" placeholder="Seleccionar fechas">
-            <div class="flex gap-3">
-                <button onclick="document.getElementById('block-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-black">Cancelar</button>
-                <button onclick="confirmBlock()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">Confirmar</button>
+            <input id="block-dates" class="w-full bg-white border border-border p-2 rounded-md text-sm mb-4" placeholder="Seleccionar fechas">
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('block-modal').classList.add('hidden')" class="flex-1 py-2 text-sm font-medium text-muted-fg border border-border rounded-md hover:bg-muted">Cancelar</button>
+                <button onclick="confirmBlock()" class="flex-1 py-2 bg-foreground text-background text-sm font-medium rounded-md hover:opacity-90">Confirmar</button>
             </div>
         </div>
     </div>
 
-    <div id="user-modal" class="fixed inset-0 bg-black/60 hidden z-[70] flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl max-w-sm w-full shadow-2xl">
-            <h3 class="text-xl font-serif font-bold mb-4">Nuevo Usuario</h3>
-            <input id="new-user-email" type="email" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl text-sm mb-3" placeholder="Email">
-            <input id="new-user-pass" type="password" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl text-sm mb-6" placeholder="Contraseña">
-            <div class="flex gap-3">
-                <button onclick="document.getElementById('user-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-black">Cancelar</button>
-                <button onclick="createNewUser()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">Crear</button>
+    <div id="user-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-lg max-w-sm w-full shadow-xl border border-border">
+            <h3 class="text-lg font-bold mb-4">Nuevo Usuario</h3>
+            <div class="space-y-3 mb-4">
+                <input id="new-user-email" type="email" class="w-full bg-white border border-border p-2 rounded-md text-sm" placeholder="Email">
+                <input id="new-user-pass" type="password" class="w-full bg-white border border-border p-2 rounded-md text-sm" placeholder="Contraseña">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('user-modal').classList.add('hidden')" class="flex-1 py-2 text-sm font-medium text-muted-fg border border-border rounded-md hover:bg-muted">Cancelar</button>
+                <button onclick="createNewUser()" class="flex-1 py-2 bg-foreground text-background text-sm font-medium rounded-md hover:opacity-90">Crear</button>
             </div>
         </div>
     </div>
 
-    <div id="edit-space-modal" class="fixed inset-0 bg-black/60 hidden z-[70] flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl">
-            <h3 class="text-xl font-serif font-bold mb-4">Editar Propiedad</h3>
+    <div id="edit-space-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-lg max-w-md w-full shadow-xl border border-border">
+            <h3 class="text-lg font-bold mb-4">Editar Propiedad</h3>
             <input type="hidden" id="edit-id">
             <div class="space-y-3 mb-6">
-                <div><label class="text-[10px] font-bold uppercase text-gray-400">Título</label><input id="edit-title" class="w-full bg-gray-50 border p-2 rounded-lg text-sm"></div>
-                <div><label class="text-[10px] font-bold uppercase text-gray-400">Precio</label><input id="edit-price" type="number" class="w-full bg-gray-50 border p-2 rounded-lg text-sm"></div>
-                <div><label class="text-[10px] font-bold uppercase text-gray-400">Ubicación</label><input id="edit-location" class="w-full bg-gray-50 border p-2 rounded-lg text-sm"></div>
-                <div><label class="text-[10px] font-bold uppercase text-gray-400">Imagen URL</label><input id="edit-image" class="w-full bg-gray-50 border p-2 rounded-lg text-sm"></div>
+                <div><label class="text-[10px] font-bold uppercase text-muted-fg">Título</label><input id="edit-title" class="w-full bg-white border border-border p-2 rounded-md text-sm"></div>
+                <div><label class="text-[10px] font-bold uppercase text-muted-fg">Precio</label><input id="edit-price" type="number" class="w-full bg-white border border-border p-2 rounded-md text-sm"></div>
+                <div><label class="text-[10px] font-bold uppercase text-muted-fg">Ubicación</label><input id="edit-location" class="w-full bg-white border border-border p-2 rounded-md text-sm"></div>
+                <div><label class="text-[10px] font-bold uppercase text-muted-fg">Imagen URL</label><input id="edit-image" class="w-full bg-white border border-border p-2 rounded-md text-sm"></div>
             </div>
-            <div class="flex gap-3">
-                <button onclick="document.getElementById('edit-space-modal').classList.add('hidden')" class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-black">Cancelar</button>
-                <button onclick="saveSpaceEdit()" class="flex-1 py-3 bg-black text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">Guardar</button>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('edit-space-modal').classList.add('hidden')" class="flex-1 py-2 text-sm font-medium text-muted-fg border border-border rounded-md hover:bg-muted">Cancelar</button>
+                <button onclick="saveSpaceEdit()" class="flex-1 py-2 bg-foreground text-background text-sm font-medium rounded-md hover:opacity-90">Guardar</button>
             </div>
         </div>
     </div>
@@ -270,76 +301,80 @@
         function switchTab(t) {
             document.querySelectorAll('.view-section').forEach(e=>e.classList.add('hidden'));
             document.getElementById('view-'+t).classList.remove('hidden');
-            document.querySelectorAll('.tab-btn').forEach(b=>{
-                b.classList.remove('bg-black','text-white','shadow-md'); 
-                b.classList.add('text-gray-500','hover:bg-gray-50');
+            document.querySelectorAll('nav button').forEach(b=>{
+                b.classList.remove('bg-foreground','text-background'); 
+                b.classList.add('text-muted-fg','hover:bg-muted','hover:text-foreground');
             });
             const btn = document.getElementById('btn-'+t);
-            btn.classList.add('bg-black','text-white','shadow-md');
-            btn.classList.remove('text-gray-500','hover:bg-gray-50');
+            btn.classList.add('bg-foreground','text-background');
+            btn.classList.remove('text-muted-fg','hover:bg-muted','hover:text-foreground');
             if(t === 'messages') loadMessages();
             if(t === 'admin') loadAdminData();
         }
 
         // 1. HOSTING (Dueño)
         async function loadHostingData() {
-            const { data: requests } = await adminDb.from('bookings').select('*, spaces(title)').eq('owner_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
-            const list = document.getElementById('requests-list');
-            list.innerHTML = (!requests || requests.length === 0) ? '<div class="p-6 border border-dashed border-gray-200 rounded-2xl text-center"><p class="text-sm text-gray-400">Sin solicitudes pendientes.</p></div>' : '';
-            
-            requests?.forEach(r => {
-                const title = r.spaces?.title || 'Propiedad no disponible';
-                let badge = r.status==='pending' ? '<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide">Pendiente</span>' : `<span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wide">${r.status}</span>`;
-                let btns = r.status==='pending' ? `<button onclick="updateStatus(${r.id},'approved')" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-800 transition">Aprobar</button><button onclick="updateStatus(${r.id},'rejected')" class="text-gray-500 hover:text-black px-4 py-2 text-xs font-bold transition">Rechazar</button>` : '';
-                if(r.status === 'approved') btns = `<button onclick="cancelBooking(${r.id})" class="text-red-500 text-xs font-bold hover:underline">Cancelar</button>`;
-
-                list.innerHTML += `<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition"><div><div class="flex items-center gap-3 mb-1"><h4 class="font-bold text-sm">${title}</h4>${badge}</div><p class="text-xs text-gray-500">${r.start_date} — ${r.end_date}</p></div><div class="flex items-center gap-2">${btns}</div></div>`;
-            });
-
-            const { data: spaces } = await adminDb.from('spaces').select('*').eq('owner_id', currentUserId);
-            const { data: blocks } = await adminDb.from('bookings').select('*').eq('owner_id', currentUserId).eq('status', 'blocked');
-            const sList = document.getElementById('my-spaces-list');
-            sList.innerHTML = (!spaces || spaces.length === 0) ? '<p class="text-gray-400">No tienes propiedades.</p>' : '';
-
-            spaces?.forEach(s => {
-                const sBlocks = blocks?.filter(b => b.space_id === s.id) || [];
-                let bHtml = sBlocks.map(sb => `<span class="bg-white border text-[10px] px-2 py-1 rounded-md flex items-center gap-2 text-gray-500 shadow-sm">${sb.start_date} <button onclick="deleteBlock(${sb.id})" class="text-red-400 hover:text-red-600 font-bold ml-1">×</button></span>`).join('');
+            try {
+                const { data: requests } = await adminDb.from('bookings').select('*, spaces(title)').eq('owner_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
+                const list = document.getElementById('requests-list');
+                list.innerHTML = (!requests || requests.length === 0) ? '<div class="p-6 border border-dashed border-border rounded-md text-center"><p class="text-sm text-muted-fg">Sin solicitudes pendientes.</p></div>' : '';
                 
-                sList.innerHTML += `
-                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-card transition">
-                        <div class="flex gap-4">
-                            <img src="${s.image || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded-xl object-cover bg-gray-100">
-                            <div class="flex-1">
-                                <h4 class="font-bold text-base mb-1">${s.title || 'Sin Título'}</h4>
-                                <p class="text-xs text-gray-400">${s.location || 'Sin ubicación'}</p>
+                requests?.forEach(r => {
+                    const title = r.spaces?.title || 'Propiedad no disponible';
+                    let badge = r.status==='pending' ? '<span class="bg-yellow-100 text-yellow-800 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide border border-yellow-200">Pendiente</span>' : `<span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wide border border-gray-200">${r.status}</span>`;
+                    let btns = r.status==='pending' ? `<button onclick="updateStatus(${r.id},'approved')" class="bg-foreground text-background px-3 py-1 rounded text-xs font-medium hover:opacity-90 transition">Aprobar</button><button onclick="updateStatus(${r.id},'rejected')" class="text-muted-fg hover:text-foreground px-3 py-1 text-xs font-medium border border-border rounded transition">Rechazar</button>` : '';
+                    if(r.status === 'approved') btns = `<button onclick="cancelBooking(${r.id})" class="text-red-500 text-xs font-medium hover:underline">Cancelar</button>`;
+
+                    list.innerHTML += `<div class="bg-white p-4 rounded-md border border-border shadow-sm flex items-center justify-between"><div><div class="flex items-center gap-3 mb-1"><h4 class="font-bold text-sm text-foreground">${title}</h4>${badge}</div><p class="text-xs text-muted-fg font-mono">${r.start_date} — ${r.end_date}</p></div><div class="flex items-center gap-2">${btns}</div></div>`;
+                });
+
+                const { data: spaces } = await adminDb.from('spaces').select('*').eq('owner_id', currentUserId);
+                const { data: blocks } = await adminDb.from('bookings').select('*').eq('owner_id', currentUserId).eq('status', 'blocked');
+                const sList = document.getElementById('my-spaces-list');
+                sList.innerHTML = (!spaces || spaces.length === 0) ? '<p class="text-muted-fg text-sm">No tienes propiedades.</p>' : '';
+
+                spaces?.forEach(s => {
+                    const sBlocks = blocks?.filter(b => b.space_id === s.id) || [];
+                    let bHtml = sBlocks.map(sb => `<span class="bg-muted border border-border text-[10px] px-2 py-0.5 rounded flex items-center gap-2 text-muted-fg font-mono">${sb.start_date} <button onclick="deleteBlock(${sb.id})" class="text-red-400 hover:text-red-600 font-bold ml-1">×</button></span>`).join('');
+                    
+                    sList.innerHTML += `
+                        <div class="bg-white p-4 rounded-md border border-border shadow-sm">
+                            <div class="flex gap-4">
+                                <img src="${s.image || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded object-cover bg-muted border border-border">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm mb-1">${s.title || 'Sin Título'}</h4>
+                                    <p class="text-xs text-muted-fg">${s.location || 'Sin ubicación'}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 justify-center">
+                                    <button onclick="openEditSpace('${s.id}')" class="text-xs font-medium bg-foreground text-background px-3 py-1 rounded hover:opacity-90">Editar</button>
+                                    <button onclick="openBlockModal(${s.id})" class="text-xs font-medium bg-white border border-border text-foreground px-3 py-1 rounded hover:bg-muted">Bloquear</button>
+                                    <button onclick="deleteSpace(${s.id})" class="text-red-500 text-xs font-medium hover:underline">Borrar</button>
+                                </div>
                             </div>
-                            <div class="flex flex-col gap-2">
-                                <button onclick="openEditSpace('${s.id}')" class="bg-black text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-gray-800">Editar</button>
-                                <button onclick="openBlockModal(${s.id})" class="bg-gray-100 hover:bg-black hover:text-white text-black text-xs px-3 py-1.5 rounded-lg font-bold transition">Bloquear</button>
-                                <button onclick="deleteSpace(${s.id})" class="text-red-400 hover:text-red-600 text-xs font-bold">Borrar</button>
-                            </div>
-                        </div>
-                        ${bHtml ? `<div class="mt-4 pt-4 border-t border-gray-50 flex flex-wrap gap-2">${bHtml}</div>` : ''}
-                    </div>`;
-            });
+                            ${bHtml ? `<div class="mt-3 pt-3 border-t border-dashed border-border flex flex-wrap gap-2">${bHtml}</div>` : ''}
+                        </div>`;
+                });
+            } catch (e) { console.error("Error Hosting:", e); }
         }
 
         // 2. RENTALS (MIS VIAJES)
         async function loadMyRentals() {
-            const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title, location)').eq('renter_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
-            const list = document.getElementById('rentals-list');
-            list.innerHTML = (!bookings || bookings.length===0) ? '<p class="text-gray-400 text-sm">No tienes reservas.</p>' : '';
-            bookings?.forEach(b => {
-                const title = b.spaces ? b.spaces.title : 'Propiedad no disponible';
-                list.innerHTML += `<div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition relative overflow-hidden"><div class="absolute top-0 left-0 w-1 h-full ${b.status==='approved'?'bg-green-500':'bg-gray-200'}"></div><div class="pl-4"><h4 class="font-serif text-xl font-bold mb-1">${title}</h4><p class="text-xs text-gray-400 uppercase tracking-widest mb-4">${b.status}</p><div class="bg-gray-50 rounded-xl p-3 flex justify-between items-center"><span class="text-xs font-bold text-gray-600">${b.start_date}</span><i class="fa-solid fa-arrow-right text-[10px] text-gray-300"></i><span class="text-xs font-bold text-gray-600">${b.end_date}</span></div>${(b.status==='pending'||b.status==='approved') ? `<button onclick="cancelBooking(${b.id})" class="w-full mt-4 border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 py-2 rounded-lg text-xs font-bold transition">Cancelar Reserva</button>` : ''}</div></div>`;
-            });
+            try {
+                const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title, location)').eq('renter_id', currentUserId).neq('status', 'blocked').order('created_at', {ascending:false});
+                const list = document.getElementById('rentals-list');
+                list.innerHTML = (!bookings || bookings.length===0) ? '<p class="text-muted-fg text-sm">No tienes reservas.</p>' : '';
+                bookings?.forEach(b => {
+                    const title = b.spaces ? b.spaces.title : 'Propiedad no disponible';
+                    list.innerHTML += `<div class="bg-white p-5 rounded-md border border-border shadow-sm"><div class="flex justify-between items-start"><div class="pr-4"><h4 class="font-bold text-sm mb-1">${title}</h4><span class="bg-muted text-[10px] px-2 py-0.5 rounded border border-border font-medium uppercase tracking-wide text-muted-fg">${b.status}</span><p class="text-xs font-mono text-muted-fg mt-3">${b.start_date} <span class="text-border">→</span> ${b.end_date}</p></div>${(b.status==='pending'||b.status==='approved') ? `<button onclick="cancelBooking(${b.id})" class="text-red-500 text-xs font-medium border border-border px-3 py-1.5 rounded hover:bg-red-50">Cancelar</button>` : ''}</div></div>`;
+                });
+            } catch (e) { console.error("Error Rentals:", e); }
         }
 
         // 3. MENSAJES
         async function loadMessages() {
             const { data: msgs } = await adminDb.from('messages').select('*, sender:profiles!messages_sender_id_fkey(email), receiver:profiles!messages_receiver_id_fkey(email), spaces(title)').or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`).order('created_at', {ascending: true});
             const div = document.getElementById('threads-list');
-            if (!msgs || msgs.length === 0) return div.innerHTML = '<div class="text-center py-20 opacity-50"><i class="fa-regular fa-comment text-4xl mb-2"></i><p class="text-sm">Bandeja vacía</p></div>';
+            if (!msgs || msgs.length === 0) return div.innerHTML = '<div class="text-center py-20 opacity-50"><i class="fa-regular fa-comment text-4xl mb-2"></i><p class="text-sm mt-2">Bandeja vacía</p></div>';
             
             const threads = {};
             msgs.forEach(m => {
@@ -355,7 +390,7 @@
             div.innerHTML = '';
             Object.values(threads).forEach(t => {
                 const last = t.msgs[t.msgs.length - 1];
-                div.innerHTML += `<div onclick='openChat(${JSON.stringify(t)})' class="bg-white p-4 rounded-xl border border-gray-100 hover:border-black/10 hover:shadow-md cursor-pointer transition flex justify-between items-center group"><div class="flex items-center gap-4"><div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 group-hover:bg-black group-hover:text-white transition"><i class="fa-solid fa-user"></i></div><div><p class="font-bold text-sm text-black mb-0.5">${t.otherEmail}</p><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">${t.spaceTitle}</p><p class="text-sm text-gray-500 truncate max-w-xs opacity-80">${last.content}</p></div></div><i class="fa-solid fa-chevron-right text-xs text-gray-300"></i></div>`;
+                div.innerHTML += `<div onclick='openChat(${JSON.stringify(t)})' class="bg-white p-4 rounded-md border border-border hover:bg-muted/50 cursor-pointer transition flex justify-between items-center group"><div class="flex items-center gap-4"><div class="w-10 h-10 bg-muted rounded-full flex items-center justify-center text-muted-fg border border-border"><i class="fa-solid fa-user"></i></div><div class="overflow-hidden"><p class="font-bold text-sm text-foreground truncate">${t.otherEmail}</p><p class="text-[10px] font-medium text-muted-fg uppercase tracking-wide mb-0.5">${t.spaceTitle}</p><p class="text-xs text-muted-fg truncate max-w-xs">${last.content}</p></div></div><i class="fa-solid fa-chevron-right text-xs text-border group-hover:text-foreground"></i></div>`;
             });
         }
 
@@ -376,22 +411,22 @@
                 uTable.innerHTML = '';
                 users?.forEach(u => {
                     uTable.innerHTML += `
-                        <tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${u.email}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <select onchange="changeUserRole('${u.id}', this.value)" class="bg-white border border-gray-200 text-xs rounded-lg p-1.5 outline-none focus:border-black cursor-pointer">
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="px-4 py-3 whitespace-nowrap text-xs font-medium text-foreground">${u.email}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-muted-fg">
+                                <select onchange="changeUserRole('${u.id}', this.value)" class="bg-white border border-border text-xs rounded p-1 outline-none cursor-pointer hover:border-foreground transition text-foreground">
                                     <option value="user" ${u.role==='user'?'selected':''}>Usuario</option>
                                     <option value="owner" ${u.role==='owner'?'selected':''}>Dueño</option>
                                     <option value="super_admin" ${u.role==='super_admin'?'selected':''}>Super Admin</option>
                                 </select>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="adminDeleteUser('${u.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">Eliminar</button>
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-xs font-medium">
+                                <button onclick="adminDeleteUser('${u.id}')" class="text-muted-fg hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>`;
                 });
 
-                // PROPIEDADES (Lista completa + Editar)
+                // PROPIEDADES (Lista completa)
                 const { data: spaces } = await adminDb.from('spaces').select('*').order('created_at', {ascending: false});
                 const sTable = document.getElementById('admin-spaces-list');
                 sTable.innerHTML = '';
@@ -401,41 +436,41 @@
                     const safeOwner = s.owner_id ? s.owner_id.substring(0,6) : 'Desconocido';
                     
                     sTable.innerHTML += `
-                        <tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 flex items-center gap-3">
-                                <img src="${safeImage}" class="w-8 h-8 rounded bg-gray-100 object-cover" onerror="this.src='https://via.placeholder.com/150'">
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="px-4 py-3 whitespace-nowrap text-xs font-medium text-foreground flex items-center gap-3">
+                                <img src="${safeImage}" class="w-6 h-6 rounded object-cover border border-border">
                                 ${safeTitle}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${safeOwner}...</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">$${s.price}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end gap-2">
-                                <button onclick="openEditSpace('${s.id}')" class="text-blue-500 hover:text-blue-700 font-bold text-xs"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteSpace('${s.id}', true)" class="text-red-400 hover:text-red-600 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-muted-fg font-mono">${safeOwner}...</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-foreground font-bold">$${s.price}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-xs font-medium">
+                                <button onclick="openEditSpace('${s.id}')" class="text-blue-600 hover:text-blue-800 mr-2"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteSpace('${s.id}', true)" class="text-muted-fg hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>`;
                 });
 
-                // RESERVAS (Blindado + APROBAR + Fechas completas)
+                // RESERVAS
                 const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title)').order('created_at', {ascending: false});
                 const bTable = document.getElementById('admin-bookings-list');
                 bTable.innerHTML = '';
                 bookings?.forEach(b => {
                     const title = b.spaces ? b.spaces.title : '<span class="text-red-400 italic">Propiedad Eliminada</span>';
-                    let actions = `<button onclick="updateStatus(${b.id}, 'cancelled')" class="text-red-400 hover:text-red-600 font-bold text-xs hover:underline">Cancelar</button>`;
+                    let actions = `<button onclick="updateStatus(${b.id}, 'cancelled')" class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase">Cancelar</button>`;
                     if(b.status === 'pending') {
-                        actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-500 hover:text-green-700 font-bold text-xs mr-3">Aprobar</button>` + actions;
+                        actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-600 hover:text-green-800 font-bold text-[10px] uppercase mr-3">Aprobar</button>` + actions;
                     }
 
                     bTable.innerHTML += `
-                        <tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${title}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${b.start_date} <span class="text-gray-300 mx-1">→</span> ${b.end_date}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 uppercase">
+                        <tr class="hover:bg-muted/50 transition">
+                            <td class="px-4 py-3 whitespace-nowrap text-xs font-medium text-foreground">${title}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-xs text-muted-fg font-mono">${b.start_date} <span class="text-border mx-1">→</span> ${b.end_date}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-[10px] leading-4 font-semibold rounded border ${b.status==='approved' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-600 border-gray-200'} uppercase tracking-wide">
                                     ${b.status}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-xs font-medium">
                                 ${actions}
                             </td>
                         </tr>`;
@@ -457,15 +492,9 @@
             const email = document.getElementById('new-user-email').value;
             const password = document.getElementById('new-user-pass').value;
             if(!email || !password) return alert("Completa todos los campos");
-            
-            // Nota: Esto puede iniciar sesión con el nuevo usuario
             const { data, error } = await adminDb.auth.signUp({ email, password });
             if(error) alert("Error: " + error.message);
-            else {
-                alert("Usuario creado. Revisa la consola o base de datos. Si se cerró sesión, vuelve a entrar como admin.");
-                document.getElementById('user-modal').classList.add('hidden');
-                loadAdminData();
-            }
+            else { alert("Usuario creado."); document.getElementById('user-modal').classList.add('hidden'); loadAdminData(); }
         }
 
         async function openEditSpace(id) {
@@ -482,12 +511,17 @@
 
         async function saveSpaceEdit() {
             const id = document.getElementById('edit-id').value;
-            const updates = {
-                title: document.getElementById('edit-title').value,
-                price: document.getElementById('edit-price').value,
-                location: document.getElementById('edit-location').value,
-                image: document.getElementById('edit-image').value
-            };
+            const newLocation = document.getElementById('edit-location').value;
+            let lat = null, lng = null;
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(newLocation)}`);
+                const data = await response.json();
+                if(data && data.length > 0) { lat = parseFloat(data[0].lat); lng = parseFloat(data[0].lon); }
+            } catch (e) { console.error("Error geocoding", e); }
+
+            const updates = { title: document.getElementById('edit-title').value, price: document.getElementById('edit-price').value, location: newLocation, image: document.getElementById('edit-image').value };
+            if (lat && lng) { updates.lat = lat; updates.lng = lng; }
+
             await adminDb.from('spaces').update(updates).eq('id', id);
             document.getElementById('edit-space-modal').classList.add('hidden');
             loadHostingData();
@@ -497,7 +531,7 @@
         async function sendMsg() { const val = document.getElementById('chat-input').value; if(!val) return; const { error } = await adminDb.from('messages').insert({ sender_id: currentUserId, receiver_id: document.getElementById('chat-to').value, space_id: document.getElementById('chat-space').value, content: val }); if (!error) { document.getElementById('chat-input').value = ''; document.getElementById('chat-modal').classList.add('hidden'); loadMessages(); } }
         let cal; function openBlockModal(id) { document.getElementById('block-space-id').value = id; document.getElementById('block-modal').classList.remove('hidden'); if(cal) cal.destroy(); cal = flatpickr("#block-dates", { mode: "range", minDate: "today" }); }
         async function confirmBlock() { const d = cal.selectedDates; if(d.length!==2) return alert("Rango incompleto"); const s=new Date(d[0].getTime()-(d[0].getTimezoneOffset()*60000)).toISOString().split('T')[0]; const e=new Date(d[1].getTime()-(d[1].getTimezoneOffset()*60000)).toISOString().split('T')[0]; await adminDb.from('bookings').insert({ space_id: document.getElementById('block-space-id').value, owner_id: currentUserId, renter_id: currentUserId, start_date: s, end_date: e, total_price: 0, status: 'blocked' }); document.getElementById('block-modal').classList.add('hidden'); loadHostingData(); }
-        function openChat(t) { document.getElementById('chat-header').innerText = t.otherEmail; document.getElementById('chat-subheader').innerText = t.spaceTitle; document.getElementById('chat-to').value = t.otherId; document.getElementById('chat-space').value = t.spaceId; const b = document.getElementById('chat-body'); b.innerHTML = ''; t.msgs.forEach(m => { const isMe = m.sender_id === currentUserId; b.innerHTML += `<div class="flex flex-col ${isMe?'items-end':'items-start'} w-full"><div class="${isMe?'bg-black text-white rounded-br-none':'bg-white text-black border border-gray-200 rounded-bl-none'} px-4 py-2.5 rounded-2xl max-w-[80%] text-sm shadow-sm">${m.content}</div><span class="text-[10px] text-gray-400 mt-1 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div>`; }); document.getElementById('chat-modal').classList.remove('hidden'); setTimeout(() => b.scrollTop = b.scrollHeight, 100); }
+        function openChat(t) { document.getElementById('chat-header').innerText = t.otherEmail; document.getElementById('chat-subheader').innerText = t.spaceTitle; document.getElementById('chat-to').value = t.otherId; document.getElementById('chat-space').value = t.spaceId; const b = document.getElementById('chat-body'); b.innerHTML = ''; t.msgs.forEach(m => { const isMe = m.sender_id === currentUserId; b.innerHTML += `<div class="flex flex-col ${isMe?'items-end':'items-start'} w-full"><div class="${isMe?'bg-foreground text-background rounded-br-none':'bg-white text-foreground border border-border rounded-bl-none'} px-4 py-2.5 rounded-2xl max-w-[80%] text-sm shadow-sm">${m.content}</div><span class="text-[10px] text-muted-fg mt-1 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div>`; }); document.getElementById('chat-modal').classList.remove('hidden'); setTimeout(() => b.scrollTop = b.scrollHeight, 100); }
     </script>
 </body>
 </html>
