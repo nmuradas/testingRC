@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Renty Club | Espacios Únicos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -16,160 +16,248 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { black: '#0F0F0F', dark: '#1A1A1A', light: '#F4F4F4' },
+                    colors: {
+                        brand: '#09090b', secondary: '#71717a', bg: '#ffffff', surface: '#f4f4f5', border: '#e4e4e7', dark: '#18181b'
+                    },
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
-                    boxShadow: { 'soft': '0 10px 40px -10px rgba(0,0,0,0.08)' }
+                    boxShadow: { 'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)' }
                 }
             }
         }
     </script>
     <style>
         .hero-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover; background-position: center; height: 85vh;
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center; height: 85vh; min-height: 600px;
         }
-        .glass-search { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .glass-search { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="text-dark bg-white antialiased">
+<body class="text-brand bg-bg antialiased selection:bg-brand selection:text-white">
 
-    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div class="container mx-auto px-6 h-20 flex justify-between items-center">
-            <a href="index.html" class="text-2xl font-serif font-bold tracking-tight text-black">Renty<span class="font-normal italic">Club</span></a>
-            <div id="nav-right" class="flex items-center gap-6 text-sm font-medium"></div>
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/95 backdrop-blur-md border-b border-border h-20 flex items-center">
+        <div class="container mx-auto px-6 h-20 flex justify-between items-center max-w-7xl relative">
+            <a href="index.html" class="flex items-center gap-2 group text-brand no-underline z-20">
+                <div class="w-9 h-9 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight">Renty<span class="font-normal italic text-secondary">Club</span></span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                <a href="index.html#catalogo" class="text-sm font-bold text-secondary hover:text-brand transition">Espacios</a>
+                <a href="events.html" class="text-sm font-bold text-secondary hover:text-brand transition">Eventos</a>
+                <a href="create.html" class="text-sm font-bold text-secondary hover:text-brand transition">Publicar espacio</a>
+            </div>
+
+            <div id="nav-right" class="flex items-center gap-6 text-sm font-medium z-20"></div>
         </div>
     </nav>
 
     <header class="hero-bg flex flex-col justify-center items-center text-white text-center px-4 relative">
-        <div class="max-w-4xl w-full animate-fade-in-up">
-            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight drop-shadow-lg">Encuentra tu espacio.<br><i class="font-light">Crea tu experiencia.</i></h1>
-            
-            <div class="glass-search rounded-full shadow-soft p-2 flex flex-col md:flex-row w-full max-w-4xl mx-auto mt-10 text-left items-center border border-gray-100">
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200">
-                    <label class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider mb-1">Ubicación</label>
-                    <input id="location-input" type="text" placeholder="¿Dónde buscas?" class="w-full bg-transparent outline-none text-black font-medium placeholder-gray-400">
+        <div class="max-w-4xl w-full animate-fade-in-up pt-10">
+            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight drop-shadow-lg font-medium">
+                Encuentra tu espacio.<br><i class="font-normal opacity-90">Crea tu experiencia.</i>
+            </h1>
+            <div class="glass-search rounded-full shadow-soft p-2 flex flex-col md:flex-row w-full max-w-4xl mx-auto mt-10 text-left items-center border border-white/20">
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Ubicación</label>
+                    <input id="location-input" type="text" placeholder="¿Dónde buscas?" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 cursor-pointer" onclick="document.getElementById('start-date-search')._flatpickr.open()">
-                    <label class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider mb-1">Entrada</label>
-                    <input id="start-date-search" type="text" placeholder="Fecha inicio" class="w-full bg-transparent outline-none text-black font-medium placeholder-gray-400 cursor-pointer">
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer" onclick="document.getElementById('start-date-search')._flatpickr.open()">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Entrada</label>
+                    <input id="start-date-search" type="text" placeholder="Fecha inicio" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 cursor-pointer" onclick="document.getElementById('end-date-search')._flatpickr.open()">
-                    <label class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider mb-1">Salida</label>
-                    <input id="end-date-search" type="text" placeholder="Fecha fin" class="w-full bg-transparent outline-none text-black font-medium placeholder-gray-400 cursor-pointer">
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer" onclick="document.getElementById('end-date-search')._flatpickr.open()">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Salida</label>
+                    <input id="end-date-search" type="text" placeholder="Fecha fin" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full">
-                    <label class="text-[10px] uppercase font-bold text-gray-400 block tracking-wider mb-1">Tipo</label>
-                    <select id="type-input" class="w-full bg-transparent outline-none text-black font-medium cursor-pointer appearance-none">
-                        <option value="all">Todo</option>
-                        <option value="Local">Local</option>
-                        <option value="Showroom">Showroom</option>
-                        <option value="Oficina">Oficina</option>
-                        <option value="Depósito">Depósito</option>
+                <div class="flex-1 px-6 py-3 w-full hover:bg-surface transition rounded-full cursor-pointer">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Tipo</label>
+                    <select id="type-input" class="w-full bg-transparent outline-none text-brand font-bold cursor-pointer appearance-none text-sm">
+                        <option value="all">Todo</option><option value="Local">Local</option><option value="Showroom">Showroom</option><option value="Oficina">Oficina</option><option value="Depósito">Depósito</option>
                     </select>
                 </div>
-                <button onclick="filterSpaces()" class="bg-black text-white w-14 h-14 rounded-full flex items-center justify-center hover:bg-gray-800 transition shadow-lg transform hover:scale-105 mx-2">
-                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
-                </button>
+                <button onclick="filterSpaces()" class="bg-brand text-white w-14 h-14 rounded-full flex items-center justify-center hover:scale-105 transition shadow-lg mx-2 flex-shrink-0"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
             </div>
         </div>
     </header>
 
-    <section class="py-24 bg-light">
-        <div class="container mx-auto px-6">
-            <h2 class="font-serif text-3xl text-black mb-12">Categorías destacadas</h2>
+    <section class="py-20 bg-surface border-b border-border">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <h2 class="font-serif text-3xl text-brand mb-10 font-bold">Categorías destacadas</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-lg" onclick="setTypeAndSearch('Local')">
+                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300" onclick="setTypeAndSearch('Local')">
                     <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
-                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Retail</h3><p class="text-sm opacity-90 font-light">Locales a la calle</p></div>
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
+                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Retail</h3><p class="text-sm opacity-90 font-medium tracking-wide">Locales a la calle</p></div>
                 </div>
-                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-lg" onclick="setTypeAndSearch('Showroom')">
+                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300" onclick="setTypeAndSearch('Showroom')">
                     <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
-                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Showroom</h3><p class="text-sm opacity-90 font-light">Galerías y Eventos</p></div>
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
+                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Showroom</h3><p class="text-sm opacity-90 font-medium tracking-wide">Galerías y Eventos</p></div>
                 </div>
-                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-lg" onclick="setTypeAndSearch('Oficina')">
+                <div class="relative h-[400px] rounded-2xl cursor-pointer group overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300" onclick="setTypeAndSearch('Oficina')">
                     <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition"></div>
-                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Workspace</h3><p class="text-sm opacity-90 font-light">Oficinas privadas</p></div>
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
+                    <div class="absolute bottom-8 left-8 text-white"><h3 class="font-serif text-3xl mb-1">Workspace</h3><p class="text-sm opacity-90 font-medium tracking-wide">Oficinas privadas</p></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 bg-white border-b border-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="font-serif text-3xl mb-4 text-black">Lo que dicen de nosotros</h2>
-                <div class="w-16 h-0.5 bg-black mx-auto opacity-20"></div>
-            </div>
+    <section class="py-16 bg-bg border-b border-border">
+        <div class="container mx-auto px-6 max-w-7xl text-center">
+            <h2 class="font-serif text-2xl font-bold text-brand mb-3 uppercase tracking-widest text-sm">CÓMO FUNCIONA</h2>
+            <p class="text-secondary max-w-2xl mx-auto mb-12 text-base font-normal">Alquilar un espacio nunca fue tan fácil. En tres simples pasos podés tener tu negocio funcionando.</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="bg-gray-50 p-10 rounded-2xl">
-                    <div class="text-black text-xs mb-6 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="font-serif text-xl italic text-gray-700 mb-8 leading-relaxed">"RentyClub nos permitió abrir nuestro Pop-Up en Palermo en menos de 48 horas. La gestión fue impecable."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover"></div>
-                        <div><p class="font-bold text-sm text-black">Sofía M.</p><p class="text-xs text-gray-400 uppercase tracking-wide">Fundadora, BohoStyle</p></div>
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4 text-xl text-brand border border-border group-hover:bg-brand group-hover:text-white transition duration-300"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3 class="font-bold text-lg mb-2 font-sans text-brand">1. Buscá</h3>
+                    <p class="text-secondary text-sm leading-relaxed max-w-xs font-sans">Explorá espacios disponibles por ubicación, tipo y duración. Filtrá según tus necesidades.</p>
+                </div>
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4 text-xl text-brand border border-border group-hover:bg-brand group-hover:text-white transition duration-300"><i class="fa-regular fa-calendar-check"></i></div>
+                    <h3 class="font-bold text-lg mb-2 font-sans text-brand">2. Reservá</h3>
+                    <p class="text-secondary text-sm leading-relaxed max-w-xs font-sans">Enviá una solicitud al propietario con las fechas y detalles de tu proyecto.</p>
+                </div>
+                <div class="flex flex-col items-center group">
+                    <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4 text-xl text-brand border border-border group-hover:bg-brand group-hover:text-white transition duration-300"><i class="fa-solid fa-key"></i></div>
+                    <h3 class="font-bold text-lg mb-2 font-sans text-brand">3. Aparecé</h3>
+                    <p class="text-secondary text-sm leading-relaxed max-w-xs font-sans">Una vez aprobada tu solicitud, coordiná la entrega y comenzá tu experiencia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-surface border-b border-border">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="text-center mb-12">
+                <h2 class="font-serif text-3xl mb-3 text-brand font-bold">Lo que dicen de nosotros</h2>
+                <div class="w-12 h-1 bg-brand/10 mx-auto rounded-full"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-bg p-8 rounded-xl border border-border shadow-sm">
+                    <div class="text-brand text-xs mb-4 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-secondary mb-6 leading-relaxed">"RentyClub nos permitió abrir nuestro Pop-Up en Palermo en menos de 48 horas. La gestión fue impecable."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover"></div>
+                        <div><p class="font-bold text-sm text-brand">Sofía M.</p><p class="text-[10px] text-secondary uppercase tracking-widest font-bold">Fundadora, BohoStyle</p></div>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-10 rounded-2xl">
-                    <div class="text-black text-xs mb-6 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="font-serif text-xl italic text-gray-700 mb-8 leading-relaxed">"La flexibilidad para alquilar por semanas cambió nuestro modelo de negocio. Muy recomendado."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-full h-full object-cover"></div>
-                        <div><p class="font-bold text-sm text-black">Julián A.</p><p class="text-xs text-gray-400 uppercase tracking-wide">CEO, TechStart</p></div>
+                <div class="bg-bg p-8 rounded-xl border border-border shadow-sm">
+                    <div class="text-brand text-xs mb-4 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-secondary mb-6 leading-relaxed">"La flexibilidad para alquilar por semanas cambió nuestro modelo de negocio. Muy recomendado."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-full h-full object-cover"></div>
+                        <div><p class="font-bold text-sm text-brand">Julián A.</p><p class="text-[10px] text-secondary uppercase tracking-widest font-bold">CEO, TechStart</p></div>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-10 rounded-2xl">
-                    <div class="text-black text-xs mb-6 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="font-serif text-xl italic text-gray-700 mb-8 leading-relaxed">"Encontramos un showroom increíble para la Fashion Week. El proceso de pago es muy seguro."</p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-full h-full object-cover"></div>
-                        <div><p class="font-bold text-sm text-black">Carla P.</p><p class="text-xs text-gray-400 uppercase tracking-wide">Event Planner</p></div>
+                <div class="bg-bg p-8 rounded-xl border border-border shadow-sm">
+                    <div class="text-brand text-xs mb-4 flex gap-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="font-serif text-lg italic text-secondary mb-6 leading-relaxed">"Encontramos un showroom increíble para la Fashion Week. El proceso de pago es muy seguro."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden"><img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-full h-full object-cover"></div>
+                        <div><p class="font-bold text-sm text-brand">Carla P.</p><p class="text-[10px] text-secondary uppercase tracking-widest font-bold">Event Planner</p></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="catalogo" class="py-24 bg-white">
-        <div class="container mx-auto px-6">
+    <section id="catalogo" class="py-24 bg-bg">
+        <div class="container mx-auto px-6 max-w-7xl">
             <div class="flex justify-between items-end mb-10">
-                <div><h2 class="font-serif text-4xl text-black mb-2">Explora espacios</h2><p class="text-gray-500 font-light">Lugares únicos seleccionados para ti.</p></div>
+                <div><h2 class="font-serif text-4xl text-brand mb-2 font-bold tracking-tight">Explora espacios</h2><p class="text-secondary font-medium">Lugares únicos seleccionados para ti.</p></div>
             </div>
-            <div id="loader" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-gray-300"></i></div>
-            <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8 hidden"></div>
-            <div id="no-results" class="hidden text-center py-24 text-gray-400 font-serif text-xl">No encontramos espacios con esos criterios.</div>
+            <div id="loader" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-border"></i></div>
+            <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8 hidden"></div>
+            <div id="no-results" class="hidden text-center py-24 text-secondary font-serif text-xl border border-dashed border-border rounded-xl">No encontramos espacios con esos criterios.</div>
         </div>
     </section>
 
-    <footer class="bg-black text-white py-24">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-start gap-16">
-                <div class="max-w-sm">
-                    <div class="font-serif text-3xl font-bold mb-6">RentyClub</div>
-                    <p class="text-gray-400 font-light leading-relaxed text-sm">Conectando marcas con los mejores espacios comerciales a corto plazo. Sin contratos largos, sin complicaciones.</p>
+    <section class="py-24 bg-dark text-white border-t border-white/10">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl mb-3 text-white font-bold">Reservá con <span class="text-gray-300">total confianza</span></h2>
+                <p class="text-gray-400 font-light text-lg">Tu seguridad y satisfacción son nuestra prioridad</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Reserva segura</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Tu pago está protegido hasta que confirmes que el espacio cumple con lo acordado.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-20 text-sm">
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-regular fa-credit-card"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Pagos flexibles</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Pagá en cuotas con tarjeta o transferencia bancaria sin costos adicionales.</p>
+                </div>
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-regular fa-comments"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Comunicación directa</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Chateá con los propietarios antes de reservar para resolver todas tus dudas.</p>
+                </div>
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-regular fa-clock"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Cancelación flexible</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Cancelá gratis hasta 48hs antes del inicio de tu reserva.</p>
+                </div>
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-solid fa-check-circle"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Espacios verificados</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Todos los espacios pasan por un proceso de verificación de calidad.</p>
+                </div>
+                <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
+                    <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-solid fa-headset"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Soporte 24/7</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Nuestro equipo está disponible para ayudarte en cualquier momento.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 pt-16 border-t border-white/10">
+                <div>
+                    <p class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-3">PARA EMPRENDEDORES</p>
+                    <h3 class="font-serif text-3xl mb-4 text-white">Hacé realidad tu idea</h3>
+                    <p class="text-gray-400 mb-8 leading-relaxed text-lg font-light">Encontrá el espacio perfecto para tu pop-up, food truck o negocio temporal. Sin contratos largos, sin complicaciones.</p>
+                    <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition flex items-center gap-2">Explorar espacios <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-3">PARA PROPIETARIOS</p>
+                    <h3 class="font-serif text-3xl mb-4 text-white">Rentabilizá tu espacio</h3>
+                    <p class="text-gray-400 mb-8 leading-relaxed text-lg font-light">¿Tenés un local vacío o un espacio sin usar? Publicalo gratis y empezá a generar ingresos extra.</p>
+                    <a href="create.html" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition inline-block">Publicar espacio</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-brand text-white py-16 border-t border-white/10">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+                <div class="max-w-xs">
+                    <div class="font-serif text-2xl font-bold mb-4 tracking-tight">RentyClub</div>
+                    <p class="text-secondary font-medium leading-relaxed text-xs">Conectando marcas con los mejores espacios comerciales a corto plazo.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-16 text-xs">
                     <div>
-                        <h4 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-500">Plataforma</h4>
-                        <ul class="space-y-4 font-medium text-gray-300">
+                        <h4 class="font-bold mb-4 uppercase tracking-widest text-secondary">Plataforma</h4>
+                        <ul class="space-y-3 font-medium text-white/80">
                             <li><a href="#" class="hover:text-white transition">Cómo funciona</a></li>
                             <li><a href="#" class="hover:text-white transition">Precios</a></li>
-                            <li><a href="#" class="hover:text-white transition">Confianza y Seguridad</a></li>
+                            <li><a href="#" class="hover:text-white transition">Confianza</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-500">Soporte</h4>
-                        <ul class="space-y-4 font-medium text-gray-300">
-                            <li><a href="#" class="hover:text-white transition">Centro de Ayuda</a></li>
+                        <h4 class="font-bold mb-4 uppercase tracking-widest text-secondary">Soporte</h4>
+                        <ul class="space-y-3 font-medium text-white/80">
+                            <li><a href="#" class="hover:text-white transition">Ayuda</a></li>
                             <li><a href="#" class="hover:text-white transition">Contacto</a></li>
-                            <li><a href="#" class="hover:text-white transition">Términos y Privacidad</a></li>
+                            <li><a href="#" class="hover:text-white transition">Legales</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-900 mt-20 pt-8 text-center text-xs text-gray-600 uppercase tracking-widest font-medium">
+            <div class="border-t border-white/10 mt-12 pt-8 text-center text-[10px] text-secondary uppercase tracking-widest font-bold">
                 &copy; 2026 RentyClub Inc. Buenos Aires, Argentina.
             </div>
         </div>
@@ -179,6 +267,13 @@
     <script>
         let allSpaces = []; let startDateGlobal = null; let endDateGlobal = null;
         document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await db.auth.getSession();
+            const navRight = document.getElementById('nav-right');
+            if (session) {
+                navRight.innerHTML = `<a href="dashboard.html" class="text-brand hover:text-gray-600 mr-4 font-bold uppercase tracking-wide text-xs transition">Mi Panel</a><a href="create.html" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Publicar</a>`;
+            } else {
+                navRight.innerHTML = `<a href="login.html" class="text-secondary hover:text-brand font-bold uppercase tracking-wide text-xs transition">Ingresar</a><a href="login.html?mode=signup" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Registrarse</a>`;
+            }
             const endPicker = flatpickr("#end-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd) => endDateGlobal = sd[0] });
             flatpickr("#start-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd, ds) => { startDateGlobal = sd[0]; if(sd.length){ endPicker.set('minDate', ds); setTimeout(()=>endPicker.open(),100); } } });
             await loadSpaces();
@@ -194,19 +289,20 @@
             document.getElementById('no-results').classList.add('hidden');
             spaces.forEach(s => {
                 const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 3 }).format(s.price);
+                const img = s.image ? s.image : 'https://via.placeholder.com/400x300?text=Renty';
                 grid.innerHTML += `
                     <div class="group cursor-pointer block" onclick="window.location.href='product.html?id=${s.id}'">
-                        <div class="aspect-[4/3] w-full overflow-hidden rounded-2xl bg-gray-100 mb-4 relative shadow-sm">
-                            <img src="${s.image}" class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/400x300?text=Renty'">
-                            ${s.type ? `<span class="absolute top-4 left-4 bg-white/90 backdrop-blur text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">${s.type}</span>` : ''}
+                        <div class="aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface mb-4 relative shadow-card border border-border group-hover:shadow-soft transition-all duration-300">
+                            <img src="${img}" class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out" onerror="this.src='https://via.placeholder.com/400x300?text=Error'">
+                            ${s.type ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-brand text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-widest shadow-sm border border-border/50">${s.type}</span>` : ''}
                         </div>
                         <div class="px-1">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-serif text-lg font-bold text-black truncate pr-4">${s.title}</h3>
-                                <div class="flex items-center gap-1 text-xs font-bold"><i class="fa-solid fa-star text-black"></i> 4.9</div>
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-serif text-lg font-bold text-brand truncate pr-4 group-hover:underline decoration-1 underline-offset-4">${s.title}</h3>
+                                <div class="flex items-center gap-1 text-xs font-bold text-brand"><i class="fa-solid fa-star text-[10px]"></i> 4.9</div>
                             </div>
-                            <p class="text-sm text-gray-500 mt-1 truncate">${s.location}</p>
-                            <p class="text-sm text-black mt-2"><span class="font-bold text-lg">${price}</span> <span class="text-gray-400 font-normal">/ noche</span></p>
+                            <p class="text-sm text-secondary mt-1 truncate font-medium">${s.location}</p>
+                            <p class="text-sm text-brand mt-2"><span class="font-bold text-lg">${price}</span> <span class="text-secondary font-normal">/ noche</span></p>
                         </div>
                     </div>`;
             });

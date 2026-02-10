@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos | Renty Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand: '#09090b', secondary: '#71717a', bg: '#ffffff', surface: '#f4f4f5', border: '#e4e4e7', dark: '#18181b' }, fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] } } }
+        }
+    </script>
+    <style>
+        .event-hero { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069&auto=format&fit=crop'); background-size: cover; background-position: center; height: 60vh; }
+    </style>
+</head>
+<body class="text-brand bg-bg antialiased">
+
+    <nav class="fixed w-full z-50 top-0 bg-white/95 backdrop-blur-md border-b border-border h-20 flex items-center">
+        <div class="container mx-auto px-6 h-20 flex justify-between items-center max-w-7xl relative">
+            <a href="index.html" class="flex items-center gap-2 group text-brand no-underline z-20">
+                <div class="w-9 h-9 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
+                <span class="text-xl font-serif font-bold tracking-tight">Renty<span class="font-normal italic text-secondary">Club</span></span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                <a href="index.html#catalogo" class="text-sm font-bold text-secondary hover:text-brand transition">Espacios</a>
+                <a href="events.html" class="text-sm font-bold text-brand transition">Eventos</a>
+                <a href="create.html" class="text-sm font-bold text-secondary hover:text-brand transition">Publicar espacio</a>
+            </div>
+            <div id="nav-right" class="flex items-center gap-6 text-sm font-medium z-20"></div>
+        </div>
+    </nav>
+
+    <header class="event-hero flex flex-col justify-center items-center text-white text-center px-4">
+        <h1 class="font-serif text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">Espacios para Eventos</h1>
+        <p class="text-lg opacity-90 font-light max-w-2xl">Lanzamientos, cócteles, reuniones corporativas y pop-ups exclusivos.</p>
+    </header>
+
+    <section class="py-24 bg-bg">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="font-serif text-3xl font-bold text-brand">Selección exclusiva</h2>
+            </div>
+            <div id="loader" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-border"></i></div>
+            <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8 hidden"></div>
+            <div id="no-results" class="hidden text-center py-24 text-secondary font-serif text-xl border border-dashed border-border rounded-xl">No hay eventos disponibles por ahora.</div>
+        </div>
+    </section>
+
+    <footer class="bg-brand text-white py-16 border-t border-white/10">
+        <div class="container mx-auto px-6 max-w-7xl text-center text-xs text-secondary font-bold uppercase tracking-widest">
+            &copy; 2026 RentyClub Inc.
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await db.auth.getSession();
+            const navRight = document.getElementById('nav-right');
+            if (session) navRight.innerHTML = `<a href="dashboard.html" class="text-brand font-bold uppercase text-xs mr-4">Mi Panel</a><a href="create.html" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase shadow-lg">Publicar</a>`;
+            else navRight.innerHTML = `<a href="login.html" class="text-secondary font-bold uppercase text-xs">Ingresar</a><a href="login.html?mode=signup" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase shadow-lg">Registrarse</a>`;
+            
+            // Cargar SOLO Showrooms (Eventos)
+            const { data } = await db.from('spaces').select('*').eq('type', 'Showroom').order('created_at', { ascending: false });
+            
+            const grid = document.getElementById('spaces-grid');
+            document.getElementById('loader').classList.add('hidden');
+            
+            if(!data || data.length === 0) {
+                document.getElementById('no-results').classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                data.forEach(s => {
+                    const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 3 }).format(s.price);
+                    grid.innerHTML += `
+                        <div class="group cursor-pointer block" onclick="window.location.href='product.html?id=${s.id}'">
+                            <div class="aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface mb-4 relative shadow-card border border-border group-hover:shadow-soft transition-all duration-300">
+                                <img src="${s.image}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-brand text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-widest shadow-sm border border-border/50">Evento</span>
+                            </div>
+                            <div class="px-1">
+                                <h3 class="font-serif text-lg font-bold text-brand truncate pr-4">${s.title}</h3>
+                                <p class="text-sm text-secondary mt-1 truncate font-medium">${s.location}</p>
+                                <p class="text-sm text-brand mt-2"><span class="font-bold text-lg">${price}</span> <span class="text-secondary font-normal">/ día</span></p>
+                            </div>
+                        </div>`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
