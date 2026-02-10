@@ -4,33 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Espacio | Renty Club</title>
+    
+    <link rel="stylesheet" href="assets/css/styles.css">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="assets/js/config.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#09090b', secondary: '#71717a', bg: '#ffffff', surface: '#f4f4f5', border: '#e4e4e7',
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="text-brand bg-bg antialiased selection:bg-brand selection:text-white">
 
-    <nav class="fixed w-full z-50 top-0 bg-white/95 backdrop-blur-md border-b border-border h-20 flex items-center">
+    <nav class="fixed w-full z-50 top-0 bg-surface/95 backdrop-blur-md border-b border-border h-20 flex items-center">
         <div class="container mx-auto px-6 h-20 flex justify-between items-center max-w-7xl relative">
             <a href="index.html" class="flex items-center gap-2 group text-brand no-underline z-20">
                 <div class="w-9 h-9 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
@@ -52,8 +44,8 @@
             <div class="w-full h-[400px] md:h-[500px] bg-surface rounded-2xl overflow-hidden mb-10 relative border border-border">
                 <img id="p-image" src="" class="w-full h-full object-cover">
                 <div class="absolute top-6 right-6 flex gap-3">
-                    <button class="bg-white p-3 rounded-full shadow-lg hover:scale-105 transition"><i class="fa-solid fa-share-nodes"></i></button>
-                    <button class="bg-white p-3 rounded-full shadow-lg hover:scale-105 transition"><i class="fa-regular fa-heart"></i></button>
+                    <button class="bg-surface/80 p-3 rounded-full shadow-lg hover:scale-105 transition border border-border"><i class="fa-solid fa-share-nodes text-brand"></i></button>
+                    <button class="bg-surface/80 p-3 rounded-full shadow-lg hover:scale-105 transition border border-border"><i class="fa-regular fa-heart text-brand"></i></button>
                 </div>
             </div>
 
@@ -71,61 +63,42 @@
                     <div><h3 class="font-bold text-lg mb-3">Descripción</h3><p id="p-desc" class="text-secondary leading-relaxed text-sm">...</p></div>
                     <div><h3 class="font-bold text-lg mb-4">¿Qué incluye?</h3><div id="p-amenities" class="grid grid-cols-2 gap-4 text-sm text-secondary"></div></div>
                     <div><h3 class="font-bold text-lg mb-3">Reglas del espacio</h3><p class="text-secondary leading-relaxed text-sm">Disponible de jueves a domingo. Mantener limpio el espacio circundante.</p></div>
-                    <hr class="border-border">
+                    
                     <div>
-                        <h3 class="font-bold text-lg mb-6">Reseñas</h3>
-                        <div class="bg-surface rounded-xl p-8 text-center border border-border">
-                            <i class="fa-regular fa-comment-dots text-2xl text-gray-300 mb-2"></i>
-                            <p class="text-secondary text-sm">Aún no hay reseñas para este espacio</p>
-                        </div>
+                        <h3 class="font-bold text-lg mb-4">Ubicación</h3>
+                        <p class="text-sm text-secondary mb-4 flex items-center gap-2"><i class="fa-solid fa-map-pin"></i> <span id="map-address-text">Cargando dirección...</span></p>
+                        <div id="product-map"></div>
                     </div>
+
+                    <hr class="border-border">
+                    <div><h3 class="font-bold text-lg mb-6">Reseñas</h3><div class="bg-surface rounded-xl p-8 text-center border border-border"><i class="fa-regular fa-comment-dots text-2xl text-gray-500 mb-2"></i><p class="text-secondary text-sm">Aún no hay reseñas para este espacio</p></div></div>
                 </div>
 
                 <div class="relative">
-                    <div class="sticky top-28 bg-white border border-border rounded-xl p-6 shadow-card">
+                    <div class="sticky top-28 bg-surface border border-border rounded-xl p-6 shadow-card">
                         <div class="mb-6">
                             <div class="flex items-end gap-1 mb-1"><span id="p-price" class="text-3xl font-bold text-brand">$0</span><span class="text-sm text-secondary mb-1">/ día</span></div>
-                            <div class="text-[10px] text-gray-400 space-y-1">
-                                <p>7+ días: <span class="text-green-600 font-bold">10% OFF</span></p>
-                                <p>30+ días: <span class="text-green-600 font-bold">25% OFF</span></p>
-                            </div>
+                            <div class="text-[10px] text-secondary space-y-1"><p>7+ días: <span class="text-green-500 font-bold">10% OFF</span></p><p>30+ días: <span class="text-green-500 font-bold">25% OFF</span></p></div>
                         </div>
 
                         <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] font-bold uppercase text-secondary block mb-1">Fechas</label>
-                                <div class="relative">
-                                    <i class="fa-regular fa-calendar absolute left-3 top-3 text-gray-400 text-xs"></i>
-                                    <input id="booking-dates" class="w-full bg-white border border-border rounded-lg py-2.5 pl-9 pr-3 text-sm focus:outline-none focus:border-brand transition cursor-pointer" placeholder="Seleccionar fechas">
-                                </div>
-                            </div>
-                            
+                            <div><label class="text-[10px] font-bold uppercase text-secondary block mb-1">Fechas</label><div class="relative"><i class="fa-regular fa-calendar absolute left-3 top-3 text-secondary text-xs"></i><input id="booking-dates" class="w-full p-3 pl-9 rounded-lg text-sm focus:outline-none focus:border-brand transition cursor-pointer" placeholder="Seleccionar fechas"></div></div>
                             <div id="booking-inputs">
-                                <div class="mb-3">
-                                    <label class="text-[10px] font-bold uppercase text-secondary block mb-1">Descripción de tu negocio</label>
-                                    <textarea id="book-business-desc" rows="2" class="w-full bg-white border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:border-brand transition resize-none" placeholder="¿Qué vas a vender o hacer?"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="text-[10px] font-bold uppercase text-secondary block mb-1">Información adicional al propietario (Opcional)</label>
-                                    <textarea id="book-additional-info" rows="2" class="w-full bg-white border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:border-brand transition resize-none" placeholder="Consultas específicas sobre el espacio..."></textarea>
-                                </div>
+                                <div class="mb-3"><label class="text-[10px] font-bold uppercase text-secondary block mb-1">Descripción de tu negocio</label><textarea id="book-business-desc" rows="2" class="w-full p-3 rounded-lg text-sm focus:outline-none focus:border-brand transition resize-none" placeholder="¿Qué vas a vender o hacer?"></textarea></div>
+                                <div class="mb-3"><label class="text-[10px] font-bold uppercase text-secondary block mb-1">Info adicional (Opcional)</label><textarea id="book-additional-info" rows="2" class="w-full p-3 rounded-lg text-sm focus:outline-none focus:border-brand transition resize-none" placeholder="Consultas específicas..."></textarea></div>
                             </div>
-
-                            <div id="price-breakdown" class="hidden bg-surface p-4 rounded-lg border border-border text-sm space-y-2 mt-4">
+                            <div id="price-breakdown" class="hidden bg-bg p-4 rounded-lg border border-border text-sm space-y-2 mt-4">
                                 <div class="flex justify-between text-secondary"><span>$<span id="calc-price">0</span> x <span id="calc-days">0</span> días</span><span>$<span id="calc-subtotal">0</span></span></div>
-                                <div id="row-discount" class="flex justify-between text-green-600 font-medium hidden"><span>Descuento (<span id="calc-disc-perc">0</span>%)</span><span>-$<span id="calc-discount">0</span></span></div>
+                                <div id="row-discount" class="flex justify-between text-green-500 font-medium hidden"><span>Descuento (<span id="calc-disc-perc">0</span>%)</span><span>-$<span id="calc-discount">0</span></span></div>
                                 <div class="flex justify-between text-secondary"><span>Tasa de servicio (10%)</span><span>$<span id="calc-fee">0</span></span></div>
                                 <div class="border-t border-border pt-2 mt-2 flex justify-between font-bold text-brand text-base"><span>Total</span><span>$<span id="calc-total">0</span></span></div>
                             </div>
                         </div>
 
                         <div class="mt-6 space-y-3">
-                            <button onclick="submitBooking()" class="w-full bg-brand hover:bg-black text-white font-bold py-3 rounded-lg text-sm transition shadow-lg">Solicitar reserva</button>
-                            <p class="text-[10px] text-center text-gray-400 leading-tight">No se cobrará hasta que el propietario acepte.</p>
-                            
-                            <button onclick="openContactModal()" class="w-full bg-white border border-border text-brand font-bold py-3 rounded-lg text-sm hover:bg-surface transition flex items-center justify-center gap-2">
-                                <i class="fa-regular fa-envelope"></i> Contactar al propietario
-                            </button>
+                            <button onclick="submitBooking()" class="w-full bg-brand hover:opacity-90 text-white font-bold py-3 rounded-lg text-sm transition shadow-lg">Solicitar reserva</button>
+                            <p class="text-[10px] text-center text-secondary leading-tight">No se cobrará hasta que el propietario acepte.</p>
+                            <button onclick="openContactModal()" class="w-full bg-surface border border-border text-brand font-bold py-3 rounded-lg text-sm hover:bg-white/5 transition flex items-center justify-center gap-2"><i class="fa-regular fa-envelope"></i> Contactar al propietario</button>
                         </div>
                     </div>
                 </div>
@@ -133,27 +106,22 @@
         </div>
     </main>
 
-    <div id="contact-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white p-6 rounded-2xl max-w-md w-full shadow-2xl border border-border">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg">Enviar mensaje</h3>
-                <button onclick="document.getElementById('contact-modal').classList.add('hidden')" class="text-secondary hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
+    <div id="contact-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-surface p-6 rounded-2xl max-w-md w-full shadow-2xl border border-border">
+            <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-lg text-brand">Enviar mensaje</h3><button onclick="document.getElementById('contact-modal').classList.add('hidden')" class="text-secondary hover:text-brand"><i class="fa-solid fa-xmark text-xl"></i></button></div>
             <p class="text-xs text-secondary mb-4">Envía una consulta directa al propietario sin iniciar una reserva.</p>
-            <textarea id="direct-msg-content" rows="4" class="w-full bg-surface border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-brand transition resize-none mb-4" placeholder="Escribe tu consulta aquí..."></textarea>
+            <textarea id="direct-msg-content" rows="4" class="w-full p-3 rounded-lg text-sm focus:outline-none focus:border-brand transition resize-none mb-4" placeholder="Escribe tu consulta aquí..."></textarea>
             <button onclick="sendDirectMessage()" class="w-full bg-brand text-white font-bold py-3 rounded-lg text-sm hover:opacity-90">Enviar mensaje</button>
         </div>
     </div>
 
-    <footer class="bg-brand text-white py-12 border-t border-white/10">
+    <footer class="bg-brand text-white py-12 border-t border-border">
         <div class="container mx-auto px-6 max-w-7xl text-center text-xs text-secondary font-bold uppercase tracking-widest">&copy; 2026 RentyClub Inc.</div>
     </footer>
 
     <script src="assets/js/app.js"></script>
     <script>
-        let currentSpace = null;
-        let selectedDates = [];
-        const SERVICE_FEE_PERCENT = 0.10; 
+        let currentSpace = null; let selectedDates = []; const SERVICE_FEE_PERCENT = 0.10; let productMap;
 
         document.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await db.auth.getSession();
@@ -167,136 +135,80 @@
 
             const { data: space, error } = await db.from('spaces').select('*').eq('id', id).single();
             if (error || !space) { window.location.href = 'index.html'; return; }
-            
-            currentSpace = space;
-            renderProduct(space);
+            currentSpace = space; renderProduct(space);
 
             const { data: bookings } = await db.from('bookings').select('start_date, end_date').eq('space_id', id).or('status.eq.approved,status.eq.blocked');
-            let disableDates = [];
-            if(bookings) bookings.forEach(b => disableDates.push({ from: b.start_date, to: b.end_date }));
+            let disableDates = []; if(bookings) bookings.forEach(b => disableDates.push({ from: b.start_date, to: b.end_date }));
 
-            flatpickr("#booking-dates", {
-                mode: "range", minDate: "today", dateFormat: "Y-m-d", disable: disableDates, locale: "es",
-                onChange: (dates) => { selectedDates = dates; calculateTotal(); }
-            });
+            flatpickr("#booking-dates", { mode: "range", minDate: "today", dateFormat: "Y-m-d", disable: disableDates, locale: "es", onChange: (dates) => { selectedDates = dates; calculateTotal(); } });
         });
 
         function renderProduct(s) {
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('product-content').classList.remove('hidden');
+            document.getElementById('loader').classList.add('hidden'); document.getElementById('product-content').classList.remove('hidden');
             document.getElementById('p-image').src = s.image || 'https://via.placeholder.com/800x500';
-            document.getElementById('p-type').innerText = s.type || 'Espacio';
-            document.getElementById('p-title').innerText = s.title;
-            document.getElementById('p-location').innerText = s.location;
-            document.getElementById('p-desc').innerText = s.description || 'Sin descripción disponible.';
+            document.getElementById('p-type').innerText = s.type || 'Espacio'; document.getElementById('p-title').innerText = s.title; document.getElementById('p-location').innerText = s.location; document.getElementById('p-desc').innerText = s.description || 'Sin descripción.';
             document.getElementById('p-price').innerText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 3 }).format(s.price);
+            document.getElementById('map-address-text').innerText = s.location;
+            if(s.size) { document.getElementById('p-size-container').classList.remove('hidden'); document.getElementById('p-size-container').classList.add('flex'); document.getElementById('p-size').innerText = s.size; }
+            const amContainer = document.getElementById('p-amenities'); amContainer.innerHTML = '';
+            if (s.amenities && s.amenities.length > 0) s.amenities.forEach(a => amContainer.innerHTML += `<div class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> ${a}</div>`);
+            else amContainer.innerHTML = '<p class="text-xs text-gray-400">No especificado</p>';
+            setTimeout(() => { initProductMap(s); }, 100);
+        }
 
-            if(s.size) {
-                document.getElementById('p-size-container').classList.remove('hidden');
-                document.getElementById('p-size-container').classList.add('flex');
-                document.getElementById('p-size').innerText = s.size;
+        async function initProductMap(s) {
+            let lat = s.lat; let lng = s.lng;
+            if (!lat || !lng) {
+                try { const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(s.location)}`); const data = await res.json(); if(data && data.length > 0) { lat = data[0].lat; lng = data[0].lon; } } catch(e) { console.error("Error geocoding", e); }
             }
-
-            const amContainer = document.getElementById('p-amenities');
-            amContainer.innerHTML = '';
-            if (s.amenities && s.amenities.length > 0) {
-                s.amenities.forEach(a => amContainer.innerHTML += `<div class="flex items-center gap-2"><i class="fa-solid fa-check text-green-600"></i> ${a}</div>`);
-            } else {
-                amContainer.innerHTML = '<p class="text-xs text-gray-400">No especificado</p>';
-            }
+            if (lat && lng) {
+                // MAPA ESTILO VOYAGER (Igual al Dashboard)
+                productMap = L.map('product-map').setView([lat, lng], 15);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }).addTo(productMap);
+                L.marker([lat, lng]).addTo(productMap).bindPopup(s.title);
+            } else { document.getElementById('product-map').innerHTML = '<div class="h-full flex items-center justify-center text-secondary text-xs">Ubicación aproximada no disponible.</div>'; }
         }
 
         function calculateTotal() {
             const breakdown = document.getElementById('price-breakdown');
             if (selectedDates.length !== 2) { breakdown.classList.add('hidden'); return; }
             breakdown.classList.remove('hidden');
-            
-            const diffTime = Math.abs(selectedDates[1] - selectedDates[0]);
-            const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+            const diffTime = Math.abs(selectedDates[1] - selectedDates[0]); const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
             const subtotal = days * currentSpace.price;
-            
-            let discountPercent = 0;
-            if (days >= 30) discountPercent = 0.25;
-            else if (days >= 7) discountPercent = 0.10;
-            
-            const discountAmount = subtotal * discountPercent;
-            const afterDiscount = subtotal - discountAmount;
-            const fee = afterDiscount * SERVICE_FEE_PERCENT;
-            const total = afterDiscount + fee;
-
+            let discountPercent = 0; if (days >= 30) discountPercent = 0.25; else if (days >= 7) discountPercent = 0.10;
+            const discountAmount = subtotal * discountPercent; const afterDiscount = subtotal - discountAmount; const fee = afterDiscount * SERVICE_FEE_PERCENT; const total = afterDiscount + fee;
             const fmt = (n) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 }).format(n);
-            
-            document.getElementById('calc-price').innerText = fmt(currentSpace.price);
-            document.getElementById('calc-days').innerText = days;
-            document.getElementById('calc-subtotal').innerText = fmt(subtotal);
-            
+            document.getElementById('calc-price').innerText = fmt(currentSpace.price); document.getElementById('calc-days').innerText = days; document.getElementById('calc-subtotal').innerText = fmt(subtotal);
             const rowDisc = document.getElementById('row-discount');
-            if (discountAmount > 0) {
-                rowDisc.classList.remove('hidden'); rowDisc.classList.add('flex');
-                document.getElementById('calc-disc-perc').innerText = discountPercent * 100;
-                document.getElementById('calc-discount').innerText = fmt(discountAmount);
-            } else {
-                rowDisc.classList.add('hidden'); rowDisc.classList.remove('flex');
-            }
-
-            document.getElementById('calc-fee').innerText = fmt(fee);
-            document.getElementById('calc-total').innerText = fmt(total);
-            currentSpace.calculatedTotal = total;
+            if (discountAmount > 0) { rowDisc.classList.remove('hidden'); rowDisc.classList.add('flex'); document.getElementById('calc-disc-perc').innerText = discountPercent * 100; document.getElementById('calc-discount').innerText = fmt(discountAmount); } else { rowDisc.classList.add('hidden'); rowDisc.classList.remove('flex'); }
+            document.getElementById('calc-fee').innerText = fmt(fee); document.getElementById('calc-total').innerText = fmt(total); currentSpace.calculatedTotal = total;
         }
 
-        // LÓGICA RESERVA
         async function submitBooking() {
             const { data: { session } } = await db.auth.getSession();
             if (!session) { window.location.href = 'login.html'; return; }
             if (selectedDates.length !== 2) return alert("Selecciona fecha de inicio y fin.");
-            
-            const businessDesc = document.getElementById('book-business-desc').value;
-            const additionalInfo = document.getElementById('book-additional-info').value;
-
+            const businessDesc = document.getElementById('book-business-desc').value; const additionalInfo = document.getElementById('book-additional-info').value;
             if(!businessDesc) return alert("Por favor, describe tu negocio.");
-
-            const bookingData = {
-                space_id: currentSpace.id, owner_id: currentSpace.owner_id, renter_id: session.user.id,
-                start_date: selectedDates[0].toISOString(), end_date: selectedDates[1].toISOString(),
-                total_price: currentSpace.calculatedTotal || 0, status: 'pending'
-            };
-
+            const bookingData = { space_id: currentSpace.id, owner_id: currentSpace.owner_id, renter_id: session.user.id, start_date: selectedDates[0].toISOString(), end_date: selectedDates[1].toISOString(), total_price: currentSpace.calculatedTotal || 0, status: 'pending' };
             const { data: booking, error } = await db.from('bookings').insert(bookingData).select().single();
             if (error) { alert("Error al reservar: " + error.message); } 
             else {
-                // Mensaje automático con la info del negocio
                 const autoMsg = `[Nueva Reserva Solicitada]\nNegocio: ${businessDesc}\nInfo Adicional: ${additionalInfo || 'N/A'}`;
                 await db.from('messages').insert({ sender_id: session.user.id, receiver_id: currentSpace.owner_id, space_id: currentSpace.id, content: autoMsg });
-                
                 alert("¡Solicitud enviada con éxito!"); window.location.href = 'dashboard.html';
             }
         }
-
-        // LÓGICA MENSAJE INDEPENDIENTE
-        function openContactModal() {
-            document.getElementById('contact-modal').classList.remove('hidden');
-        }
-
+        function openContactModal() { document.getElementById('contact-modal').classList.remove('hidden'); }
         async function sendDirectMessage() {
-            const { data: { session } } = await db.auth.getSession();
-            if (!session) { alert("Inicia sesión para contactar."); window.location.href = 'login.html'; return; }
-            
-            const msg = document.getElementById('direct-msg-content').value;
-            if(!msg.trim()) return alert("Escribe un mensaje.");
-
-            const { error } = await db.from('messages').insert({
-                sender_id: session.user.id,
-                receiver_id: currentSpace.owner_id,
-                space_id: currentSpace.id,
-                content: msg
-            });
-
-            if(error) alert("Error al enviar.");
-            else {
-                alert("Mensaje enviado.");
-                document.getElementById('direct-msg-content').value = '';
-                document.getElementById('contact-modal').classList.add('hidden');
-            }
+            const { data: { session } } = await db.auth.getSession(); if (!session) { alert("Inicia sesión."); window.location.href = 'login.html'; return; }
+            const msg = document.getElementById('direct-msg-content').value; if(!msg.trim()) return alert("Escribe un mensaje.");
+            const { error } = await db.from('messages').insert({ sender_id: session.user.id, receiver_id: currentSpace.owner_id, space_id: currentSpace.id, content: msg });
+            if(error) alert("Error al enviar."); else { alert("Mensaje enviado."); document.getElementById('direct-msg-content').value = ''; document.getElementById('contact-modal').classList.add('hidden'); }
         }
     </script>
 </body>

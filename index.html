@@ -4,36 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Renty Club | Espacios Únicos</title>
+    
+    <link rel="stylesheet" href="assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="assets/js/config.js"></script> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#09090b', secondary: '#71717a', bg: '#ffffff', surface: '#f4f4f5', border: '#e4e4e7', dark: '#18181b'
-                    },
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
-                    boxShadow: { 'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)' }
-                }
-            }
-        }
-    </script>
-    <style>
-        .hero-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover; background-position: center; height: 85vh; min-height: 600px;
-        }
-        .glass-search { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
-        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-    </style>
 </head>
 <body class="text-brand bg-bg antialiased selection:bg-brand selection:text-white">
 
@@ -54,31 +32,45 @@
         </div>
     </nav>
 
-    <header class="hero-bg flex flex-col justify-center items-center text-white text-center px-4 relative">
+    <header class="hero-section px-4">
         <div class="max-w-4xl w-full animate-fade-in-up pt-10">
-            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight drop-shadow-lg font-medium">
+            <h1 class="font-serif text-5xl md:text-7xl mb-6 leading-tight drop-shadow-lg font-medium text-white">
                 Encuentra tu espacio.<br><i class="font-normal opacity-90">Crea tu experiencia.</i>
             </h1>
-            <div class="glass-search rounded-full shadow-soft p-2 flex flex-col md:flex-row w-full max-w-4xl mx-auto mt-10 text-left items-center border border-white/20">
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer">
-                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Ubicación</label>
-                    <input id="location-input" type="text" placeholder="¿Dónde buscas?" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm">
+            
+            <div class="glass-search rounded-full p-2 flex flex-col md:flex-row w-full max-w-4xl mx-auto mt-10 text-left items-center">
+                
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 hover:bg-surface/50 transition rounded-full cursor-pointer group">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1 group-hover:text-brand">Ubicación</label>
+                    <input id="location-input" type="text" placeholder="¿Dónde buscas?" class="w-full bg-transparent border-none outline-none text-brand font-bold placeholder-gray-400 text-sm">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer" onclick="document.getElementById('start-date-search')._flatpickr.open()">
-                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Entrada</label>
-                    <input id="start-date-search" type="text" placeholder="Fecha inicio" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
+                
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 hover:bg-surface/50 transition rounded-full cursor-pointer group" onclick="document.getElementById('start-date-search')._flatpickr.open()">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1 group-hover:text-brand">Entrada</label>
+                    <input id="start-date-search" type="text" placeholder="Fecha inicio" class="w-full bg-transparent border-none outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-border hover:bg-surface transition rounded-full cursor-pointer" onclick="document.getElementById('end-date-search')._flatpickr.open()">
-                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Salida</label>
-                    <input id="end-date-search" type="text" placeholder="Fecha fin" class="w-full bg-transparent outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
+                
+                <div class="flex-1 px-6 py-3 w-full border-b md:border-b-0 md:border-r border-gray-200 hover:bg-surface/50 transition rounded-full cursor-pointer group" onclick="document.getElementById('end-date-search')._flatpickr.open()">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1 group-hover:text-brand">Salida</label>
+                    <input id="end-date-search" type="text" placeholder="Fecha fin" class="w-full bg-transparent border-none outline-none text-brand font-bold placeholder-gray-400 text-sm cursor-pointer">
                 </div>
-                <div class="flex-1 px-6 py-3 w-full hover:bg-surface transition rounded-full cursor-pointer">
-                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1">Tipo</label>
-                    <select id="type-input" class="w-full bg-transparent outline-none text-brand font-bold cursor-pointer appearance-none text-sm">
-                        <option value="all">Todo</option><option value="Local">Local</option><option value="Showroom">Showroom</option><option value="Oficina">Oficina</option><option value="Depósito">Depósito</option>
-                    </select>
+                
+                <div class="flex-1 px-6 py-3 w-full hover:bg-surface/50 transition rounded-full cursor-pointer group">
+                    <label class="text-[10px] uppercase font-bold text-secondary block tracking-widest mb-1 group-hover:text-brand">Tipo</label>
+                    <div class="relative">
+                        <select id="type-input" class="w-full bg-transparent border-none outline-none text-brand font-bold cursor-pointer appearance-none text-sm relative z-10">
+                            <option value="all">Todo</option>
+                            <option value="Local">Local</option>
+                            <option value="Showroom">Showroom</option>
+                            <option value="Oficina">Oficina</option>
+                            <option value="Depósito">Depósito</option>
+                        </select>
+                    </div>
                 </div>
-                <button onclick="filterSpaces()" class="bg-brand text-white w-14 h-14 rounded-full flex items-center justify-center hover:scale-105 transition shadow-lg mx-2 flex-shrink-0"><i class="fa-solid fa-magnifying-glass text-lg"></i></button>
+                
+                <button onclick="filterSpaces()" class="bg-brand text-white w-14 h-14 rounded-full flex items-center justify-center hover:scale-105 transition shadow-lg mx-2 flex-shrink-0">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -110,6 +102,7 @@
         <div class="container mx-auto px-6 max-w-7xl text-center">
             <h2 class="font-serif text-2xl font-bold text-brand mb-3 uppercase tracking-widest text-sm">CÓMO FUNCIONA</h2>
             <p class="text-secondary max-w-2xl mx-auto mb-12 text-base font-normal">Alquilar un espacio nunca fue tan fácil. En tres simples pasos podés tener tu negocio funcionando.</p>
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div class="flex flex-col items-center group">
                     <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mb-4 text-xl text-brand border border-border group-hover:bg-brand group-hover:text-white transition duration-300"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -168,7 +161,10 @@
     <section id="catalogo" class="py-24 bg-bg">
         <div class="container mx-auto px-6 max-w-7xl">
             <div class="flex justify-between items-end mb-10">
-                <div><h2 class="font-serif text-4xl text-brand mb-2 font-bold tracking-tight">Explora espacios</h2><p class="text-secondary font-medium">Lugares únicos seleccionados para ti.</p></div>
+                <div>
+                    <h2 class="font-serif text-4xl text-brand mb-2 font-bold tracking-tight">Explora espacios</h2>
+                    <p class="text-secondary font-medium">Lugares únicos seleccionados para ti.</p>
+                </div>
             </div>
             <div id="loader" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-border"></i></div>
             <div id="spaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8 hidden"></div>
@@ -182,6 +178,7 @@
                 <h2 class="font-serif text-3xl mb-3 text-white font-bold">Reservá con <span class="text-gray-300">total confianza</span></h2>
                 <p class="text-gray-400 font-light text-lg">Tu seguridad y satisfacción son nuestra prioridad</p>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
                 <div class="bg-white/5 p-8 rounded-xl border border-white/10 hover:bg-white/10 transition group">
                     <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-6 text-white text-xl"><i class="fa-solid fa-shield-halved"></i></div>
@@ -214,18 +211,23 @@
                     <p class="text-sm text-gray-400 leading-relaxed">Nuestro equipo está disponible para ayudarte en cualquier momento.</p>
                 </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 pt-16 border-t border-white/10">
                 <div>
                     <p class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-3">PARA EMPRENDEDORES</p>
                     <h3 class="font-serif text-3xl mb-4 text-white">Hacé realidad tu idea</h3>
                     <p class="text-gray-400 mb-8 leading-relaxed text-lg font-light">Encontrá el espacio perfecto para tu pop-up, food truck o negocio temporal. Sin contratos largos, sin complicaciones.</p>
-                    <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition flex items-center gap-2">Explorar espacios <i class="fa-solid fa-arrow-right"></i></button>
+                    <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition flex items-center gap-2">
+                        Explorar espacios <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
                 <div>
                     <p class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-3">PARA PROPIETARIOS</p>
                     <h3 class="font-serif text-3xl mb-4 text-white">Rentabilizá tu espacio</h3>
                     <p class="text-gray-400 mb-8 leading-relaxed text-lg font-light">¿Tenés un local vacío o un espacio sin usar? Publicalo gratis y empezá a generar ingresos extra.</p>
-                    <a href="create.html" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition inline-block">Publicar espacio</a>
+                    <a href="create.html" class="bg-white text-black px-8 py-3 rounded-lg font-bold text-sm hover:bg-gray-200 transition inline-block">
+                        Publicar espacio
+                    </a>
                 </div>
             </div>
         </div>
@@ -266,30 +268,46 @@
     <script src="assets/js/app.js"></script>
     <script>
         let allSpaces = []; let startDateGlobal = null; let endDateGlobal = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await db.auth.getSession();
             const navRight = document.getElementById('nav-right');
+            
             if (session) {
-                navRight.innerHTML = `<a href="dashboard.html" class="text-brand hover:text-gray-600 mr-4 font-bold uppercase tracking-wide text-xs transition">Mi Panel</a><a href="create.html" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Publicar</a>`;
+                navRight.innerHTML = `
+                    <a href="dashboard.html" class="text-brand hover:text-gray-600 mr-4 font-bold uppercase tracking-wide text-xs transition">Mi Panel</a>
+                    <a href="create.html" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Publicar</a>
+                `;
             } else {
-                navRight.innerHTML = `<a href="login.html" class="text-secondary hover:text-brand font-bold uppercase tracking-wide text-xs transition">Ingresar</a><a href="login.html?mode=signup" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Registrarse</a>`;
+                navRight.innerHTML = `
+                    <a href="login.html" class="text-secondary hover:text-brand font-bold uppercase tracking-wide text-xs transition">Ingresar</a>
+                    <a href="login.html?mode=signup" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Registrarse</a>
+                `;
             }
+
             const endPicker = flatpickr("#end-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd) => endDateGlobal = sd[0] });
             flatpickr("#start-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd, ds) => { startDateGlobal = sd[0]; if(sd.length){ endPicker.set('minDate', ds); setTimeout(()=>endPicker.open(),100); } } });
+            
             await loadSpaces();
         });
+
         async function loadSpaces() {
             const { data, error } = await db.from('spaces').select('*, bookings(start_date, end_date, status)').order('created_at', { ascending: false });
             if(data) { allSpaces = data; renderSpaces(data); }
             document.getElementById('loader').classList.add('hidden'); document.getElementById('spaces-grid').classList.remove('hidden');
         }
+
         function renderSpaces(spaces) {
             const grid = document.getElementById('spaces-grid'); grid.innerHTML = '';
             if(spaces.length===0) return document.getElementById('no-results').classList.remove('hidden');
+            
             document.getElementById('no-results').classList.add('hidden');
+            grid.classList.remove('hidden');
+            
             spaces.forEach(s => {
                 const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumSignificantDigits: 3 }).format(s.price);
                 const img = s.image ? s.image : 'https://via.placeholder.com/400x300?text=Renty';
+                
                 grid.innerHTML += `
                     <div class="group cursor-pointer block" onclick="window.location.href='product.html?id=${s.id}'">
                         <div class="aspect-[4/3] w-full overflow-hidden rounded-xl bg-surface mb-4 relative shadow-card border border-border group-hover:shadow-soft transition-all duration-300">
@@ -302,11 +320,12 @@
                                 <div class="flex items-center gap-1 text-xs font-bold text-brand"><i class="fa-solid fa-star text-[10px]"></i> 4.9</div>
                             </div>
                             <p class="text-sm text-secondary mt-1 truncate font-medium">${s.location}</p>
-                            <p class="text-sm text-brand mt-2"><span class="font-bold text-lg">${price}</span> <span class="text-secondary font-normal">/ noche</span></p>
+                            <p class="text-sm text-brand mt-2"><span class="font-bold text-lg">${price}</span> <span class="text-secondary font-normal">/ día</span></p>
                         </div>
                     </div>`;
             });
         }
+
         function filterSpaces() {
             const l = document.getElementById('location-input').value.toLowerCase(); const t = document.getElementById('type-input').value;
             const filtered = allSpaces.filter(s => {
@@ -320,6 +339,7 @@
             });
             renderSpaces(filtered); document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});
         }
+
         function setTypeAndSearch(t) { document.getElementById('type-input').value = t; filterSpaces(); }
     </script>
 </body>
