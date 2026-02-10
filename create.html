@@ -91,6 +91,46 @@
                 <textarea id="description" class="w-full p-2 border rounded h-24" required></textarea>
             </div>
 
+            <!-- AMENITIES / COMODIDADES -->
+            <div class="bg-offwhite p-4 border border-gray-100">
+                <label class="block font-bold text-sm mb-3 text-black">Amenities</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Seguridad 24hs">
+                        <span>Seguridad 24hs</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Calefacción">
+                        <span>Calefacción</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Baño privado">
+                        <span>Baño privado</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Cocina">
+                        <span>Cocina</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Cochera">
+                        <span>Cochera</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Vidriera">
+                        <span>Vidriera</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="Aire Acondicionado">
+                        <span>Aire Acondicionado</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" class="amenity-checkbox" value="WiFi">
+                        <span>WiFi</span>
+                    </label>
+                </div>
+                <p class="text-xs text-gray-500 mt-3">* Seleccioná todas las comodidades que apliquen.</p>
+            </div>
+
             <button type="submit" class="w-full bg-black text-white py-4 rounded-sm font-bold hover:bg-gray-800 shadow-lg uppercase tracking-widest text-xs">
                 Publicar Ahora
             </button>
@@ -160,6 +200,8 @@
                 lng: parseFloat(lng),
                 image: document.getElementById('image').value,
                 description: document.getElementById('description').value,
+                // Guardamos amenities como array de strings (TEXT[] en Supabase)
+                amenities: Array.from(document.querySelectorAll('.amenity-checkbox:checked')).map(x => x.value),
                 tags: ['Nuevo']
             };
 

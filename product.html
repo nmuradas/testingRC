@@ -71,6 +71,12 @@
                     <p id="p-desc" class="text-gray-600 leading-8 text-lg font-light"></p>
                 </div>
 
+                <!-- AMENITIES -->
+                <div id="amenities-section" class="space-y-5 pt-2 hidden">
+                    <h3 class="font-bold text-xl font-serif text-black">Amenities</h3>
+                    <div id="p-amenities" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                </div>
+
                 <div class="pt-6 border-t border-gray-100">
                     <h3 class="font-bold text-xl font-serif mb-6 text-black">Ubicación</h3>
                     <div id="map" class="h-96 w-full rounded-3xl border border-gray-200 z-0 shadow-sm"></div>
@@ -180,6 +186,9 @@
             currentPrice = space.price; 
             ownerId = space.owner_id;
 
+            // Amenities
+            renderAmenities(space.amenities);
+
             // Mostrar contenido
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('product-content').classList.remove('hidden');
@@ -216,6 +225,54 @@
                 }
             });
             document.getElementById('end-date').addEventListener('change', calcTotal);
+        }
+
+        function renderAmenities(amenities) {
+            const section = document.getElementById('amenities-section');
+            const container = document.getElementById('p-amenities');
+            if (!section || !container) return;
+
+            const list = Array.isArray(amenities) ? amenities.filter(Boolean) : [];
+            if (list.length === 0) {
+                section.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            // Mapa: amenity -> FontAwesome icon
+            const iconByAmenity = {
+                'Seguridad 24hs': 'fa-shield-halved',
+                'Calefacción': 'fa-fire',
+                'Baño privado': 'fa-toilet',
+                'Cocina': 'fa-utensils',
+                'Cochera': 'fa-car',
+                'Vidriera': 'fa-store',
+                'Aire Acondicionado': 'fa-snowflake',
+                'WiFi': 'fa-wifi'
+            };
+
+            container.innerHTML = list.map(a => {
+                const icon = iconByAmenity[a] || 'fa-circle-check';
+                return `
+                    <div class="flex items-center gap-3 border border-gray-200 bg-white rounded-2xl px-4 py-3">
+                        <div class="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center">
+                            <i class="fa-solid ${icon} text-black"></i>
+                        </div>
+                        <div class="text-sm font-semibold text-black">${escapeHtml(a)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            section.classList.remove('hidden');
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         function calcTotal() {
