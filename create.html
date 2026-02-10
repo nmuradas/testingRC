@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/renty.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -14,10 +14,14 @@
             theme: {
                 extend: {
                     colors: {
-                        black: '#111111',
-                        white: '#ffffff',
-                        offwhite: '#F9F9F9'
+                        background: '#ffffff',
+                        foreground: '#09090b', // Zinc 950
+                        muted: '#f4f4f5',      // Zinc 100
+                        'muted-foreground': '#71717a',
+                        border: '#e4e4e7',     // Zinc 200
+                        input: '#e4e4e7',
                     },
+                    borderRadius: { DEFAULT: '0.5rem' }, // 8px
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['Playfair Display', 'serif']
@@ -27,31 +31,31 @@
         }
     </script>
 </head>
-<body class="bg-offwhite font-sans antialiased">
+<body class="bg-muted/30 font-sans antialiased text-foreground">
     
-    <nav class="bg-white fixed w-full z-50 top-0 border-b border-gray-100 h-20 flex items-center">
+    <nav class="bg-background fixed w-full z-50 top-0 border-b border-border h-16 flex items-center">
         <div class="container mx-auto px-6 flex justify-between items-center w-full">
-            <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 bg-black text-white flex items-center justify-center font-serif text-xl italic">R</div>
-                <span class="text-xl font-serif font-bold tracking-tight text-black">RentyClub</span>
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 bg-foreground text-background flex items-center justify-center font-serif text-lg italic rounded">R</div>
+                <span class="text-lg font-serif font-bold tracking-tight text-foreground">RentyClub</span>
             </a>
             <div id="nav-right" class="flex items-center gap-8"></div>
         </div>
     </nav>
 
-    <div class="max-w-3xl mx-auto pt-28 px-6 pb-16">
-        <div class="bg-white p-8 md:p-10 shadow-2xl border border-gray-100 rc-hover-lift">
-            <h1 class="text-3xl font-serif font-bold mb-8 text-black">Publicar Nuevo Espacio</h1>
+    <div class="max-w-3xl mx-auto pt-24 px-6 pb-16">
+        <div class="bg-background p-8 border border-border rounded-lg shadow-sm">
+            <h1 class="text-2xl font-serif font-bold mb-6 text-foreground">Publicar Nuevo Espacio</h1>
         
         <form id="create-form" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block font-bold text-sm mb-1">Título del anuncio</label>
-                    <input type="text" id="title" class="w-full p-2 border rounded" required>
+                <div class="space-y-2">
+                    <label class="block font-medium text-sm text-muted-foreground uppercase tracking-wide">Título del anuncio</label>
+                    <input type="text" id="title" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition" required>
                 </div>
-                <div>
-                    <label class="block font-bold text-sm mb-1">Tipo de Espacio</label>
-                    <select id="type" class="w-full p-2 border rounded">
+                <div class="space-y-2">
+                    <label class="block font-medium text-sm text-muted-foreground uppercase tracking-wide">Tipo de Espacio</label>
+                    <select id="type" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground bg-white cursor-pointer">
                         <option>Local Comercial</option>
                         <option>Oficina Privada</option>
                         <option>Showroom</option>
@@ -60,78 +64,77 @@
                 </div>
             </div>
 
-            <div class="bg-offwhite p-4 border border-gray-100">
-                <label class="block font-bold text-sm mb-1 text-black">Ubicación (Dirección)</label>
+            <div class="bg-muted/30 p-5 border border-input rounded-lg">
+                <label class="block font-medium text-sm mb-2 text-foreground uppercase tracking-wide">Ubicación (Dirección)</label>
                 <div class="flex gap-2 mb-3">
-                    <input type="text" id="address-input" class="w-full p-2 border rounded" placeholder="Ej: Av. Corrientes 1234, Buenos Aires">
-                    <button type="button" id="btn-search-map" class="bg-black text-white px-4 py-2 rounded-sm font-bold hover:bg-gray-800 whitespace-nowrap uppercase tracking-widest text-xs">
-                        Buscar en Mapa
+                    <input type="text" id="address-input" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground bg-white" placeholder="Ej: Av. Corrientes 1234, Buenos Aires">
+                    <button type="button" id="btn-search-map" class="bg-foreground text-background px-4 py-2 rounded text-xs font-bold hover:opacity-90 transition whitespace-nowrap uppercase tracking-widest shadow-sm">
+                        Buscar Mapa
                     </button>
                 </div>
-                <div id="map" class="h-64 w-full rounded border border-gray-300 z-0"></div>
-                <p class="text-xs text-gray-500 mt-2">* Verifica que el marcador esté en la posición correcta.</p>
+                <div id="map" class="h-64 w-full rounded border border-border z-0"></div>
+                <p class="text-xs text-muted-foreground mt-2 flex items-center gap-1"><i class="fa-solid fa-info-circle"></i> Verifica que el marcador esté en la posición correcta.</p>
                 
                 <input type="hidden" id="lat">
                 <input type="hidden" id="lng">
             </div>
 
             <div class="grid grid-cols-2 gap-6">
-                <div>
-                    <label class="block font-bold text-sm mb-1">Precio por día ($)</label>
-                    <input type="number" id="price" class="w-full p-2 border rounded" required>
+                <div class="space-y-2">
+                    <label class="block font-medium text-sm text-muted-foreground uppercase tracking-wide">Precio por día ($)</label>
+                    <input type="number" id="price" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition" required>
                 </div>
-                <div>
-                    <label class="block font-bold text-sm mb-1">URL de la Imagen</label>
-                    <input type="url" id="image" class="w-full p-2 border rounded" placeholder="https://..." required>
+                <div class="space-y-2">
+                    <label class="block font-medium text-sm text-muted-foreground uppercase tracking-wide">URL de la Imagen</label>
+                    <input type="url" id="image" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition" placeholder="https://..." required>
                 </div>
             </div>
 
-            <div>
-                <label class="block font-bold text-sm mb-1">Descripción</label>
-                <textarea id="description" class="w-full p-2 border rounded h-24" required></textarea>
+            <div class="space-y-2">
+                <label class="block font-medium text-sm text-muted-foreground uppercase tracking-wide">Descripción</label>
+                <textarea id="description" class="w-full p-2.5 border border-input rounded text-sm focus:outline-none focus:ring-1 focus:ring-foreground transition h-24 resize-none" required></textarea>
             </div>
 
-            <!-- AMENITIES / COMODIDADES -->
-            <div class="bg-offwhite p-4 border border-gray-100">
-                <label class="block font-bold text-sm mb-3 text-black">Amenities</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Seguridad 24hs">
-                        <span>Seguridad 24hs</span>
+            <div class="bg-white p-5 border border-input rounded-lg">
+                <label class="block font-medium text-sm mb-4 text-foreground uppercase tracking-wide">Amenities</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Seguridad 24hs">
+                        <span>Seguridad</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Calefacción">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Calefacción">
                         <span>Calefacción</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Baño privado">
-                        <span>Baño privado</span>
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Baño privado">
+                        <span>Baño</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Cocina">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Cocina">
                         <span>Cocina</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Cochera">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Cochera">
                         <span>Cochera</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Vidriera">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Vidriera">
                         <span>Vidriera</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="Aire Acondicionado">
-                        <span>Aire Acondicionado</span>
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="Aire Acondicionado">
+                        <span>Aire Acond.</span>
                     </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" class="amenity-checkbox" value="WiFi">
+                    <label class="flex items-center gap-2 text-sm text-gray-600 hover:text-foreground cursor-pointer transition">
+                        <input type="checkbox" class="amenity-checkbox accent-foreground w-4 h-4 rounded border-gray-300" value="WiFi">
                         <span>WiFi</span>
                     </label>
                 </div>
-                <p class="text-xs text-gray-500 mt-3">* Seleccioná todas las comodidades que apliquen.</p>
+                <p class="text-[10px] text-muted-foreground mt-3">* Seleccioná todas las comodidades que apliquen.</p>
             </div>
 
-            <button type="submit" class="w-full bg-black text-white py-4 rounded-sm font-bold hover:bg-gray-800 shadow-lg uppercase tracking-widest text-xs">
+            <button type="submit" class="w-full bg-foreground text-background py-3 rounded font-bold text-sm hover:opacity-90 shadow-sm uppercase tracking-widest transition">
                 Publicar Ahora
             </button>
         </form>
