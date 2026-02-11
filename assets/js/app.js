@@ -100,8 +100,8 @@ function renderNavbar() {
         `;
     } else {
         navRight.innerHTML = `
-            <a href="login.html" class="text-sm font-bold text-gray-500 hover:text-black uppercase tracking-wide transition hidden md:block mr-4">Ingresar</a>
-            <a href="login.html?mode=signup" class="bg-black text-white px-6 py-3 font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition shadow-lg">Registrarse</a>
+            <a href="login.html" class="text-sm font-bold text-gray-500 hover:text-black uppercase tracking-wide transition">Ingresar</a>
+            <a href="register.html" class="bg-black text-white px-6 py-3 font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition shadow-lg ml-2">Registrarse</a>
         `;
     }
 }
