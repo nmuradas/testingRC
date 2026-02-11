@@ -372,7 +372,93 @@
                 list.innerHTML += `<div class="bg-surface rounded-xl border border-border shadow-card p-4 flex gap-5 items-center transition hover:shadow-hover"><img src="${img}" class="w-32 h-24 rounded-lg object-cover bg-gray-100"><div class="flex-1"><div class="flex justify-between items-start mb-1"><h4 class="font-bold text-brand text-lg">${title}</h4><span class="${badgeClass} px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1"><i class="fa-regular fa-clock"></i> ${b.status}</span></div><p class="text-xs text-gray-500 mb-3"><i class="fa-solid fa-location-dot mr-1"></i> ${loc}</p><div class="flex items-center gap-4 text-sm font-medium text-gray-700"><span class="flex items-center gap-2"><i class="fa-regular fa-calendar"></i> ${b.start_date} - ${b.end_date}</span><span class="font-bold text-black">${price}</span></div>${(b.status==='pending'||b.status==='approved') ? `<button onclick="cancelBooking(${b.id})" class="text-red-400 text-xs font-bold hover:underline mt-2">Cancelar solicitud</button>` : ''}</div></div>`;
             });
         }
-        async function loadMessages() { /* ... igual ... */ } // (Ya está la lógica arriba en la carga)
+        
+        async function loadMessages() {
+            const { data: msgs } = await adminDb.from('messages').select('*, sender:profiles!messages_sender_id_fkey(email), receiver:profiles!messages_receiver_id_fkey(email), spaces(title, image)').or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`).order('created_at', {ascending: true});
+            const listDiv = document.getElementById('threads-list');
+            
+            // Si no hay mensajes
+            if (!msgs || msgs.length === 0) {
+                listDiv.innerHTML = '<div class="text-center py-10 opacity-50"><p class="text-xs">No hay mensajes</p></div>';
+                return;
+            }
+
+            // Agrupar mensajes por conversación (hilo)
+            const threads = {};
+            msgs.forEach(m => {
+                const isMe = m.sender_id === currentUserId;
+                const otherId = isMe ? m.receiver_id : m.sender_id;
+                const otherEmail = isMe ? (m.receiver?.email || 'Usuario') : (m.sender?.email || 'Usuario'); 
+                const spaceTitle = m.spaces?.title || 'Consulta'; 
+                const spaceImg = m.spaces?.image || 'https://via.placeholder.com/100';
+                
+                // Clave única por Espacio + Usuario
+                const key = `${m.space_id}-${otherId}`;
+                
+                if (!threads[key]) {
+                    threads[key] = { otherId, otherEmail, spaceTitle, spaceId: m.space_id, spaceImg, msgs: [] };
+                }
+                threads[key].msgs.push(m);
+            });
+
+            // Dibujar la lista de hilos
+            listDiv.innerHTML = '';
+            Object.values(threads).forEach(t => {
+                const last = t.msgs[t.msgs.length - 1]; 
+                const time = new Date(last.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                
+                // Importante: openChat usa JSON.stringify, aseguramos que las comillas no rompan el HTML
+                const threadData = JSON.stringify(t).replace(/"/g, '&quot;');
+
+                listDiv.innerHTML += `
+                <div onclick='openChat(${JSON.stringify(t)})' class="p-3 rounded-xl hover:bg-gray-100 cursor-pointer transition flex items-start gap-3 group border-b border-gray-50 last:border-0">
+                    <img src="${t.spaceImg}" class="w-10 h-10 rounded-lg object-cover bg-gray-100 border border-gray-200">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <h4 class="font-bold text-xs text-brand truncate max-w-[120px]">${t.spaceTitle}</h4>
+                            <span class="text-[10px] text-gray-400 font-medium">${time}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mb-0.5 flex items-center gap-1">
+                            <i class="fa-solid fa-user text-[8px]"></i> ${t.otherEmail}
+                        </p>
+                        <p class="text-xs text-gray-600 truncate opacity-80 group-hover:opacity-100 font-medium">
+                            ${last.content}
+                        </p>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        function openChat(t) {
+            document.getElementById('chat-empty-state').classList.add('hidden'); 
+            document.getElementById('chat-active-view').classList.remove('hidden');
+            
+            document.getElementById('chat-header').innerText = t.otherEmail; 
+            document.getElementById('chat-subheader').innerText = t.spaceTitle; 
+            document.getElementById('chat-to').value = t.otherId; 
+            document.getElementById('chat-space').value = t.spaceId;
+            
+            const b = document.getElementById('chat-body'); 
+            b.innerHTML = '';
+            
+            t.msgs.forEach(m => { 
+                const isMe = m.sender_id === currentUserId; 
+                b.innerHTML += `
+                <div class="flex flex-col ${isMe?'items-end':'items-start'} w-full animate-fade-in-up">
+                    <div class="${isMe?'bg-black text-white rounded-br-none':'bg-white text-black border border-gray-200 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm">
+                        ${m.content}
+                    </div>
+                    <span class="text-[10px] text-gray-400 mt-1 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                </div>`; 
+            }); 
+            
+            setTimeout(() => b.scrollTop = b.scrollHeight, 100);
+        }
+        
+        function closeChat() { 
+            document.getElementById('chat-active-view').classList.add('hidden'); 
+            document.getElementById('chat-empty-state').classList.remove('hidden'); 
+        }
 
         async function loadAdminData() {
             const { count: u } = await adminDb.from('profiles').select('*', { count: 'exact', head: true });
@@ -388,8 +474,7 @@
             const sTable = document.getElementById('admin-spaces-list'); sTable.innerHTML = '';
             spaces?.forEach(s => { 
                 const owner = s.owner_id ? s.owner_id.substring(0,6) : 'N/A';
-                // AQUÍ ESTÁ EL ARREGLO DE LA CELDA DE PROPIEDAD
-                // Y EL ARREGLO DE LA CELDA DE ACCIÓN (div wrapper)
+                // TABLA PROPIEDADES (WRAPPER DIV)
                 sTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900"><div class="flex items-center gap-3"><img src="${s.image||'https://via.placeholder.com/150'}" class="w-8 h-8 rounded bg-gray-100 object-cover">${s.title}</div></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${owner}...</td>
@@ -403,7 +488,7 @@
                 </tr>`; 
             });
 
-            // ADMIN BOOKINGS (LÓGICA CORREGIDA + ARREGLO BORDES)
+            // ADMIN BOOKINGS (WRAPPER DIV)
             const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title)').order('created_at', {ascending: false});
             const bTable = document.getElementById('admin-bookings-list'); bTable.innerHTML = '';
             
@@ -411,21 +496,17 @@
                 const title = b.spaces ? b.spaces.title : '<span class="text-red-400 italic">Eliminada</span>';
                 let actions = '';
                 
-                // Lógica de botones (Estado: Pendiente, Aprobado, Rechazado)
                 if (b.status === 'pending') {
                     actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-600 hover:text-green-800 font-bold text-xs mr-2">Aprobar</button>
                                <button onclick="updateStatus(${b.id}, 'rejected')" class="text-red-400 hover:text-red-600 font-bold text-xs">Rechazar</button>`;
                 } else if (b.status === 'approved') {
                     actions = `<button onclick="updateStatus(${b.id}, 'cancelled')" class="text-red-400 hover:text-red-600 font-bold text-xs hover:underline">Cancelar</button>`;
                 } else if (b.status === 'rejected') {
-                    // Permitir corregir rechazo
                     actions = `<button onclick="updateStatus(${b.id}, 'approved')" class="text-green-600 hover:text-green-800 font-bold text-xs">Re-Aprobar</button>`;
                 } else {
-                    // Cancelada o Bloqueada: Sin acciones
                     actions = `<span class="text-gray-300 text-xs italic">-</span>`;
                 }
 
-                // ARREGLO BORDES EN COLUMNA ACCIÓN (div wrapper)
                 bTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">${title}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${b.start_date} <span class="text-gray-300 mx-1">→</span> ${b.end_date}</td>
