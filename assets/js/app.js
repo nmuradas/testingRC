@@ -114,3 +114,4 @@ async function handleLogout() {
     await db.auth.signOut();
     window.location.href = 'index.html';
 }
+

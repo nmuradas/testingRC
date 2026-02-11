@@ -1,0 +1,120 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Precios - Renty Club</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/config.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-bg text-brand font-sans antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
+                    <span class="text-2xl font-bold tracking-tight text-brand">RentyClub</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="how-it-works.html" class="text-sm font-medium hover:text-gray-500 transition">Cómo funciona</a>
+                    <a href="pricing.html" class="text-sm font-bold text-brand">Precios</a>
+                    <a href="login.html" class="text-sm font-bold hover:underline">INGRESAR</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-40 pb-20 px-4">
+        <div class="text-center mb-16 animate-fade-in-up">
+            <h1 class="font-serif text-5xl italic mb-4">Sin costos ocultos.</h1>
+            <p class="text-secondary">Un modelo transparente para que sepas exactamente cuánto pagas y ganas.</p>
+        </div>
+
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in-up delay-100">
+            
+            <div class="bg-white p-10 rounded-3xl border border-border shadow-sm hover:shadow-card transition flex flex-col relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-gray-50 px-4 py-2 rounded-bl-xl text-[10px] font-bold uppercase tracking-wider text-gray-500">Para quienes alquilan</div>
+                <h3 class="text-2xl font-bold mb-2">Huéspedes</h3>
+                <div class="text-4xl font-serif italic mb-6">0% <span class="text-sm font-sans text-secondary not-italic">por buscar</span></div>
+                <p class="text-secondary text-sm mb-8 leading-relaxed">Explorar es completamente gratuito. Solo aplicamos una tarifa de servicio cuando confirmas una reserva.</p>
+                
+                <ul class="space-y-4 mb-10 flex-1">
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Búsqueda ilimitada</span></li>
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Protección de pagos</span></li>
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Soporte 24/7 en reservas</span></li>
+                    <li class="flex items-start gap-3 text-sm text-gray-400"><i class="fa-solid fa-info-circle mt-1"></i> <span>Tarifa de servicio: 10% del total</span></li>
+                </ul>
+                <a href="index.html" class="block w-full py-4 bg-gray-100 hover:bg-gray-200 text-brand font-bold text-center rounded-xl transition">Buscar espacios</a>
+            </div>
+
+            <div class="bg-brand text-white p-10 rounded-3xl shadow-2xl flex flex-col relative overflow-hidden border border-gray-800">
+                <div class="absolute top-0 right-0 bg-white/20 px-4 py-2 rounded-bl-xl text-[10px] font-bold uppercase tracking-wider text-white">Para dueños</div>
+                <h3 class="text-2xl font-bold mb-2">Anfitriones</h3>
+                <div class="text-4xl font-serif italic mb-6">3% <span class="text-sm font-sans text-white/60 not-italic">por reserva</span></div>
+                <p class="text-white/70 text-sm mb-8 leading-relaxed">Publicar tu espacio es gratis. Solo deducimos una pequeña comisión cuando recibes un pago confirmado.</p>
+                
+                <ul class="space-y-4 mb-10 flex-1">
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-white mt-1"></i> <span>Publicación gratuita</span></li>
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-white mt-1"></i> <span>Gestión de calendario</span></li>
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-white mt-1"></i> <span>Seguro de protección</span></li>
+                    <li class="flex items-start gap-3 text-sm"><i class="fa-solid fa-check text-white mt-1"></i> <span>Verificación de usuarios</span></li>
+                </ul>
+                <a href="create.html" class="block w-full py-4 bg-white hover:bg-gray-100 text-brand font-bold text-center rounded-xl transition">Publicar mi espacio</a>
+            </div>
+
+        </div>
+    </main>
+    <footer class="bg-surface pt-20 pb-10 border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div>
+                <a href="index.html" class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-brand text-white flex items-center justify-center font-serif italic rounded">R</div>
+                    <span class="font-bold text-xl">RentyClub</span>
+                </a>
+                <p class="text-secondary text-sm mb-6">La plataforma líder para alquiler de espacios temporales premium.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-instagram text-xs"></i></a>
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-twitter text-xs"></i></a>
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-linkedin-in text-xs"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Compañía</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="how-it-works.html" class="hover:text-brand">Cómo funciona</a></li>
+                    <li><a href="pricing.html" class="hover:text-brand">Precios y Tarifas</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Soporte</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="help.html" class="hover:text-brand">Centro de ayuda</a></li>
+                    <li><a href="trust.html" class="hover:text-brand">Confianza y Seguridad</a></li>
+                    <li><a href="contact.html" class="hover:text-brand">Contacto / Soporte</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Legal</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="legal.html" class="hover:text-brand">Términos y Condiciones</a></li>
+                    <li><a href="legal.html" class="hover:text-brand">Política de Privacidad</a></li>
+                    <li><a href="legal.html" class="hover:text-brand">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs text-secondary">© 2024 RentyClub Inc. Todos los derechos reservados.</p>
+            <div class="flex gap-6 text-xs text-secondary font-bold">
+                <span>ESPAÑOL (AR)</span>
+                <span>$ ARS</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

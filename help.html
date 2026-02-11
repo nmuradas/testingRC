@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Centro de Ayuda - Renty Club</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/config.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-bg text-brand font-sans antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
+                    <span class="text-2xl font-bold tracking-tight text-brand">RentyClub</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-sm font-medium hover:text-gray-500 transition">Volver al inicio</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20">
+        <div class="bg-surface border-b border-border py-20 mb-16">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <h1 class="font-serif text-4xl mb-8">¿Cómo podemos ayudarte?</h1>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-5 top-4 text-gray-400"></i>
+                    <input type="text" class="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand shadow-sm text-sm" placeholder="Buscar un problema (ej. cancelar reserva, pagos...)">
+                </div>
+            </div>
+        </div>
+
+        <section class="max-w-6xl mx-auto px-4 mb-20">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <a href="#" class="p-6 rounded-2xl border border-border hover:border-black hover:shadow-md transition text-center group">
+                    <i class="fa-solid fa-calendar-check text-2xl mb-4 text-gray-400 group-hover:text-brand transition"></i>
+                    <h3 class="font-bold text-sm">Reservas</h3>
+                </a>
+                <a href="#" class="p-6 rounded-2xl border border-border hover:border-black hover:shadow-md transition text-center group">
+                    <i class="fa-solid fa-credit-card text-2xl mb-4 text-gray-400 group-hover:text-brand transition"></i>
+                    <h3 class="font-bold text-sm">Pagos y Cobros</h3>
+                </a>
+                <a href="#" class="p-6 rounded-2xl border border-border hover:border-black hover:shadow-md transition text-center group">
+                    <i class="fa-solid fa-house-user text-2xl mb-4 text-gray-400 group-hover:text-brand transition"></i>
+                    <h3 class="font-bold text-sm">Tu Cuenta</h3>
+                </a>
+                <a href="#" class="p-6 rounded-2xl border border-border hover:border-black hover:shadow-md transition text-center group">
+                    <i class="fa-solid fa-bullhorn text-2xl mb-4 text-gray-400 group-hover:text-brand transition"></i>
+                    <h3 class="font-bold text-sm">Seguridad</h3>
+                </a>
+            </div>
+        </section>
+
+        <section class="max-w-3xl mx-auto px-4">
+            <h2 class="font-bold text-xl mb-6">Artículos más leídos</h2>
+            <div class="space-y-4">
+                <details class="group bg-white border border-border rounded-xl p-4 cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium text-sm list-none">
+                        <span>¿Cómo funcionan las cancelaciones?</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-secondary text-xs mt-3 leading-relaxed">
+                        Los anfitriones eligen entre tres políticas: Flexible (reembolso completo 24h antes), Moderada (5 días antes) o Estricta. Revisa la política en la página de cada espacio antes de reservar.
+                    </p>
+                </details>
+                <details class="group bg-white border border-border rounded-xl p-4 cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium text-sm list-none">
+                        <span>¿Cuándo se me cobra?</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-secondary text-xs mt-3 leading-relaxed">
+                        El cargo se realiza en tu tarjeta en el momento que el anfitrión ACEPTA tu solicitud. Si es una Reserva Inmediata, se cobra al instante.
+                    </p>
+                </details>
+                <details class="group bg-white border border-border rounded-xl p-4 cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium text-sm list-none">
+                        <span>Contactar al anfitrión antes de reservar</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-secondary text-xs mt-3 leading-relaxed">
+                        Puedes usar el botón "Enviar mensaje" en el perfil del espacio para consultar dudas específicas sobre disponibilidad o reglas de la casa.
+                    </p>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-surface pt-20 pb-10 border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div>
+                <a href="index.html" class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-brand text-white flex items-center justify-center font-serif italic rounded">R</div>
+                    <span class="font-bold text-xl">RentyClub</span>
+                </a>
+                <p class="text-secondary text-sm mb-6">La plataforma líder para alquiler de espacios temporales premium.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-instagram text-xs"></i></a>
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-twitter text-xs"></i></a>
+                    <a href="#" class="w-8 h-8 bg-white border border-border rounded-full flex items-center justify-center hover:border-black transition"><i class="fa-brands fa-linkedin-in text-xs"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Compañía</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="how-it-works.html" class="hover:text-brand">Cómo funciona</a></li>
+                    <li><a href="pricing.html" class="hover:text-brand">Precios y Tarifas</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Soporte</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="help.html" class="hover:text-brand">Centro de ayuda</a></li>
+                    <li><a href="trust.html" class="hover:text-brand">Confianza y Seguridad</a></li>
+                    <li><a href="contact.html" class="hover:text-brand">Contacto / Soporte</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-wider">Legal</h4>
+                <ul class="space-y-4 text-sm text-secondary">
+                    <li><a href="legal.html" class="hover:text-brand">Términos y Condiciones</a></li>
+                    <li><a href="legal.html" class="hover:text-brand">Política de Privacidad</a></li>
+                    <li><a href="legal.html" class="hover:text-brand">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs text-secondary">© 2024 RentyClub Inc. Todos los derechos reservados.</p>
+            <div class="flex gap-6 text-xs text-secondary font-bold">
+                <span>ESPAÑOL (AR)</span>
+                <span>$ ARS</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

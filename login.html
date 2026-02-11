@@ -2,169 +2,118 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Renty Club | Espacios Únicos</title>
+    <title>Iniciar Sesión - Renty Club</title>
     
     <link rel="stylesheet" href="assets/css/styles.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="assets/js/config.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/config.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="bg-offwhite min-h-screen flex items-center justify-center font-sans antialiased">
+<body class="bg-bg text-brand font-sans antialiased flex flex-col min-h-screen">
 
-    <div class="bg-white p-10 shadow-2xl w-full max-w-md relative border border-gray-100 rc-hover-lift">
-        <a href="index.html" class="absolute top-4 left-4 text-gray-400 hover:text-black text-sm">
-            <i class="fa-solid fa-arrow-left"></i> Volver
-        </a>
-
-        <div class="text-center mb-8 mt-4">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-black text-white text-xl font-serif italic mb-4">R</div>
-            <h2 id="form-title" class="text-3xl font-serif font-bold text-black">Iniciar Sesión</h2>
-            <p id="form-subtitle" class="text-gray-500 text-sm">Ingresa a tu cuenta para gestionar reservas</p>
-        </div>
-
-        <form id="auth-form" class="space-y-5">
-            <div id="name-field" class="hidden">
-                <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo</label>
-                <input type="text" id="full-name" class="w-full p-3 border border-gray-300 rounded-sm outline-none transition" placeholder="Ej: Juan Pérez">
-            </div>
-
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
-                <div class="relative">
-                    <i class="fa-solid fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
-                    <input type="email" id="email" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-sm outline-none transition" placeholder="hola@ejemplo.com" required>
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 bg-brand text-white flex items-center justify-center font-serif text-xl italic rounded-lg">R</div>
+                    <span class="text-2xl font-bold tracking-tight text-brand">RentyClub</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-secondary hidden md:block">¿No tienes cuenta?</span>
+                    <a href="register.html" class="text-sm font-bold hover:underline">Regístrate</a>
                 </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
-                <div class="relative">
-                    <i class="fa-solid fa-lock absolute left-3 top-3.5 text-gray-400"></i>
-                    <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-sm outline-none transition" placeholder="••••••••" required>
-                </div>
-            </div>
-
-            <div id="error-msg" class="hidden bg-red-50 text-red-500 text-sm p-3 rounded border border-red-200 text-center"></div>
-            <div id="success-msg" class="hidden bg-green-50 text-green-600 text-sm p-3 rounded border border-green-200 text-center"></div>
-
-            <button type="submit" id="submit-btn" class="w-full bg-black text-white font-bold py-3 rounded-sm hover:bg-gray-800 transition shadow-lg uppercase tracking-widest text-xs">
-                Ingresar
-            </button>
-        </form>
-
-        <div class="mt-6 text-center text-sm">
-            <p id="toggle-text" class="text-gray-500">
-                ¿No tienes cuenta? 
-                <button onclick="toggleMode()" class="text-black font-bold hover:underline">Regístrate aquí</button>
-            </p>
         </div>
-    </div>
+    </nav>
 
-    <script>
-        // ==========================================
-        // CONFIGURACIÓN (PEGAR CLAVES)
-        // ==========================================
-        const supabaseUrl = 'https://pmedrqauhesybkzxraxd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I';
-        
-        const db = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // ESTADO
-        let isLoginMode = true;
-
-        // ELEMENTOS DOM
-        const form = document.getElementById('auth-form');
-        const nameField = document.getElementById('name-field');
-        const formTitle = document.getElementById('form-title');
-        const formSubtitle = document.getElementById('form-subtitle');
-        const submitBtn = document.getElementById('submit-btn');
-        const toggleText = document.getElementById('toggle-text');
-        const errorMsg = document.getElementById('error-msg');
-        const successMsg = document.getElementById('success-msg');
-
-        // CAMBIAR MODO (LOGIN <-> REGISTRO)
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            errorMsg.classList.add('hidden');
-            successMsg.classList.add('hidden');
+    <main class="flex-1 flex items-center justify-center px-4 pt-32 pb-20">
+        <div class="w-full max-w-md animate-fade-in-up">
             
-            if (isLoginMode) {
-                nameField.classList.add('hidden');
-                formTitle.innerText = "Iniciar Sesión";
-                formSubtitle.innerText = "Ingresa a tu cuenta para gestionar reservas";
-                submitBtn.innerText = "Ingresar";
-                toggleText.innerHTML = `¿No tienes cuenta? <button onclick="toggleMode()" class="text-black font-bold hover:underline">Regístrate aquí</button>`;
-            } else {
-                nameField.classList.remove('hidden');
-                formTitle.innerText = "Crear Cuenta";
-                formSubtitle.innerText = "Únete a la comunidad de RentyClub";
-                submitBtn.innerText = "Registrarme";
-                toggleText.innerHTML = `¿Ya tienes cuenta? <button onclick="toggleMode()" class="text-black font-bold hover:underline">Inicia sesión</button>`;
-            }
-        }
+            <div class="bg-white p-8 md:p-10 rounded-3xl shadow-card border border-border">
+                <div class="text-center mb-8">
+                    <h1 class="font-serif text-3xl italic mb-2">Bienvenido de nuevo.</h1>
+                    <p class="text-secondary text-sm">Ingresa tus datos para gestionar tus reservas.</p>
+                </div>
 
-        // MANEJAR EL ENVÍO
-        form.addEventListener('submit', async (e) => {
+                <form id="login-form" class="space-y-4">
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Email</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="email" id="email" required class="w-full bg-gray-50 border border-gray-200 p-3 pl-10 rounded-xl text-sm focus:outline-none focus:border-black focus:ring-0 transition" placeholder="hola@ejemplo.com">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Contraseña</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="password" id="password" required class="w-full bg-gray-50 border border-gray-200 p-3 pl-10 rounded-xl text-sm focus:outline-none focus:border-black focus:ring-0 transition" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div id="error-msg" class="hidden bg-red-50 text-red-500 text-xs p-3 rounded-lg border border-red-100 text-center font-bold"></div>
+
+                    <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition shadow-lg mt-6">
+                        Ingresar
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center text-xs text-secondary">
+                    ¿Olvidaste tu contraseña? <a href="#" class="underline hover:text-black">Recuperar</a>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-100 text-center text-xs text-secondary">
+                    ¿Aún no tienes cuenta? <a href="register.html" class="font-bold text-black hover:underline">Crear cuenta gratis</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-surface pt-10 pb-10 border-t border-border mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-secondary">© 2024 RentyClub Inc.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Inicializar cliente Supabase
+        const _sbLogin = supabase.createClient('https://pmedrqauhesybkzxraxd.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtZWRycWF1aGVzeWJrenhyYXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTQyNTIsImV4cCI6MjA4NTk5MDI1Mn0.DnC8YSij2mN-gR3kcnYzjhVmy1HXKcul_TcXzAjcI-I');
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const fullName = document.getElementById('full-name').value;
+            const btn = e.target.querySelector('button');
+            const errorDiv = document.getElementById('error-msg');
 
-            // Reset mensajes
-            errorMsg.classList.add('hidden');
-            successMsg.classList.add('hidden');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Procesando...";
+            // Reset UI
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
+            errorDiv.classList.add('hidden');
 
             try {
-                if (isLoginMode) {
-                    // --- LOGIN ---
-                    const { data, error } = await db.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-                    if (error) throw error;
-                    
-                    window.location.href = 'index.html'; // Redirigir al inicio
-                } else {
-                    // --- REGISTRO ---
-                    if (!fullName) throw new Error("Por favor ingresa tu nombre completo.");
+                const { data, error } = await _sbLogin.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
 
-                    const { data, error } = await db.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            data: { full_name: fullName } // Esto se guarda en profiles gracias al trigger SQL
-                        }
-                    });
-                    if (error) throw error;
+                if (error) throw error;
 
-                    successMsg.innerText = "Cuenta creada con éxito. Iniciando sesión...";
-                    successMsg.classList.remove('hidden');
-                    
-                    // Pequeño delay para que lean el mensaje
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                }
+                // Redirigir al Dashboard si sale bien
+                window.location.href = 'dashboard.html';
 
             } catch (err) {
                 console.error(err);
-                errorMsg.innerText = err.message || "Ocurrió un error. Verifica tus datos.";
-                errorMsg.classList.remove('hidden');
-                submitBtn.disabled = false;
-                submitBtn.innerText = isLoginMode ? "Ingresar" : "Registrarme";
+                btn.disabled = false;
+                btn.innerText = 'Ingresar';
+                errorDiv.innerText = "Email o contraseña incorrectos.";
+                errorDiv.classList.remove('hidden');
             }
         });
     </script>
