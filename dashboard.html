@@ -474,7 +474,6 @@
             const sTable = document.getElementById('admin-spaces-list'); sTable.innerHTML = '';
             spaces?.forEach(s => { 
                 const owner = s.owner_id ? s.owner_id.substring(0,6) : 'N/A';
-                // TABLA PROPIEDADES (WRAPPER DIV)
                 sTable.innerHTML += `<tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900"><div class="flex items-center gap-3"><img src="${s.image||'https://via.placeholder.com/150'}" class="w-8 h-8 rounded bg-gray-100 object-cover">${s.title}</div></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${owner}...</td>
@@ -488,7 +487,6 @@
                 </tr>`; 
             });
 
-            // ADMIN BOOKINGS (WRAPPER DIV)
             const { data: bookings } = await adminDb.from('bookings').select('*, spaces(title)').order('created_at', {ascending: false});
             const bTable = document.getElementById('admin-bookings-list'); bTable.innerHTML = '';
             
@@ -535,6 +533,8 @@
                 const b = document.getElementById('chat-body');
                 b.innerHTML += `<div class="flex flex-col items-end w-full animate-fade-in-up"><div class="bg-black text-white rounded-br-none px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm">${val}</div><span class="text-[10px] text-gray-400 mt-1 px-1">Ahora</span></div>`;
                 b.scrollTop = b.scrollHeight;
+                // ACTUALIZAR SIDEBAR
+                loadMessages();
             } 
         }
         let cal; function openBlockModal(id) { document.getElementById('block-space-id').value = id; document.getElementById('block-modal').classList.remove('hidden'); if(cal) cal.destroy(); cal = flatpickr("#block-dates", { mode: "range", minDate: "today" }); }
