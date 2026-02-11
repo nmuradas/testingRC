@@ -239,7 +239,7 @@ table thead th { background-color: #f9fafb !important; color: #71717a !important
 
         /* Asegura que los botones del nav tengan espacio entre sí en el celu */
     #nav-right {
-        gap: 1px !important;
+        gap: 0px !important;
         display: flex !important;
         align-items: center !important;
     }
