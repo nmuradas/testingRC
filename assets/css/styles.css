@@ -250,5 +250,66 @@ table thead th { background-color: #f9fafb !important; color: #71717a !important
         padding-left: 6px !important;
         padding-right: 10px !important;
     }
+    /* MEJORA VISUAL BUSCADOR MÓVIL */
+.glass-search {
+    background: #ffffff !important;
+    border: 1px solid var(--color-border) !important;
 }
 
+/* Le damos un fondo gris muy tenue a cada caja para que se distingan */
+.glass-search > div {
+    background-color: #f9fafb !important; /* Gris ultra claro */
+    margin-bottom: 8px !important;
+    border-radius: 12px !important;
+    border: 1px solid #f1f1f1 !important;
+}
+
+/* Forzamos que el texto y placeholder se vean */
+.glass-search input::placeholder {
+    color: #a1a1aa !important;
+    font-weight: 400 !important;
+}
+
+.glass-search input {
+    color: var(--color-brand) !important;
+    padding-left: 0 !important; /* Reset para que no se desalinee */
+}
+
+
+}
+
+/* FIX ICONOS EN LOGIN/REGISTER */
+.relative i.fa-envelope, 
+.relative i.fa-lock, 
+.relative i.fa-user {
+    position: absolute !important;
+    left: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    color: #a1a1aa !important;
+}
+
+/* Empujamos el texto hacia la derecha para que no toque el icono */
+input[type="email"], 
+input[type="password"], 
+input[type="text"] {
+    padding-left: 45px !important; /* Espacio sagrado para el icono */
+}
+
+/* FIX GLOBAL PARA INPUTS CON ICONOS */
+.relative i {
+    color: #94a3b8 !important; /* Gris suave */
+    pointer-events: none; /* Para que el click pase al input */
+}
+
+/* Forzamos el espacio a la izquierda en login y register */
+#login-form input, 
+#register-form input {
+    padding-left: 45px !important;
+}
+
+/* Si usas formularios fuera de esos IDs, usa esta clase general */
+.input-with-icon {
+    padding-left: 45px !important;
+}
