@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel - Renty Club</title>
     
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -112,41 +113,51 @@
             <div id="rentals-list" class="space-y-4 max-w-4xl"></div>
         </div>
 
-        <div id="view-messages" class="view-section hidden h-full">
-            <div class="grid grid-cols-12 h-full bg-surface rounded-2xl border border-border shadow-card overflow-hidden">
-                <div class="col-span-4 border-r border-border flex flex-col">
-                    <div class="p-6 border-b border-border">
-                        <h2 class="font-bold text-xl mb-4">Mensajes</h2>
-                        <div class="relative">
-                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
-                            <input class="w-full bg-gray-50 border border-gray-100 rounded-lg py-2.5 pl-9 pr-4 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-black" placeholder="Buscar...">
-                        </div>
+        <div id="view-messages" class="view-section hidden" style="height: calc(100vh - 160px);">
+            <div class="grid grid-cols-12 h-full bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+                
+                <div class="col-span-4 border-r border-border flex flex-col h-full overflow-hidden" id="msg-list-col">
+                    <div class="p-4 border-b border-border shrink-0">
+                        <h2 class="font-bold text-lg mb-2">Mensajes</h2>
+                        <input class="w-full bg-gray-50 border border-gray-100 rounded-lg py-2 px-3 text-xs outline-none" placeholder="Buscar...">
                     </div>
-                    <div id="threads-list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
+                    <div id="threads-list" class="flex-1 overflow-y-auto p-2 min-h-0">
+                        </div>
                 </div>
                 
-                <div class="col-span-8 bg-gray-50 flex flex-col items-center justify-center text-center p-10" id="chat-empty-state">
-                    <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 mb-4 text-2xl"><i class="fa-regular fa-comments"></i></div>
-                    <h3 class="font-bold text-lg text-gray-700">Seleccioná una conversación</h3>
-                </div>
-
-                <div class="col-span-8 flex flex-col hidden h-full" id="chat-active-view">
-                    <div class="p-4 border-b border-border bg-white flex justify-between items-center shadow-sm z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-user"></i></div>
-                            <div><h3 class="font-bold text-sm" id="chat-header">User</h3><p class="text-xs text-gray-500" id="chat-subheader">Space</p></div>
-                        </div>
-                        <button onclick="closeChat()" class="text-gray-400 hover:text-black md:hidden"><i class="fa-solid fa-xmark"></i></button>
+                <div class="col-span-8 flex flex-col h-full overflow-hidden relative" id="msg-chat-col">
+                    
+                    <div id="chat-empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-center p-10">
+                        <i class="fa-regular fa-comments text-4xl text-gray-200 mb-2"></i>
+                        <p class="text-gray-400 text-sm">Seleccioná un chat</p>
                     </div>
-                    <div id="chat-body" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"></div>
-                    <div class="p-4 bg-white border-t border-border flex gap-2">
-                        <input type="hidden" id="chat-to"><input type="hidden" id="chat-space">
-                        <input id="chat-input" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-black" placeholder="Escribe..." onkeypress="if(event.key==='Enter') sendMsg()">
-                        <button onclick="sendMsg()" class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+
+                    <div id="chat-active-view" class="hidden flex-col h-full w-full bg-white relative">
+                        
+                        <div class="h-16 shrink-0 p-4 border-b border-border flex justify-between items-center bg-white z-10">
+                            <div class="flex items-center gap-3">
+                                <button onclick="closeChat()" class="md:hidden"><i class="fa-solid fa-arrow-left"></i></button>
+                                <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center text-xs">R</div>
+                                <div>
+                                    <h3 class="font-bold text-sm" id="chat-header">Usuario</h3>
+                                    <p class="text-[10px] text-gray-500" id="chat-subheader">Espacio</p>
+                                </div>
+                            </div>
+                            <button onclick="closeChat()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        
+                        <div id="chat-body" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-gray-50">
+                            </div>
+                        
+                        <div class="h-20 shrink-0 p-4 border-t border-border bg-white flex items-center gap-2">
+                            <input type="hidden" id="chat-to"><input type="hidden" id="chat-space">
+                            <input id="chat-input" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm outline-none focus:border-black" placeholder="Escribí un mensaje..." onkeypress="if(event.key==='Enter') sendMsg()">
+                            <button onclick="sendMsg()" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center hover:scale-105 transition"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>        
 
         <div id="view-admin" class="view-section hidden">
             <div class="bg-surface p-8 rounded-2xl border border-border shadow-card">
@@ -287,6 +298,8 @@
             document.getElementById('view-'+t).classList.remove('hidden');
             document.querySelectorAll('aside nav button').forEach(b=>{ b.classList.remove('bg-gray-100', 'text-black', 'font-bold'); b.classList.add('text-gray-600', 'hover:bg-gray-50'); });
             const btn = document.getElementById('btn-'+t); if(btn) { btn.classList.add('bg-gray-100', 'text-black', 'font-bold'); btn.classList.remove('text-gray-600', 'hover:bg-gray-50'); }
+            if(t === 'hosting') loadHostingData();
+            if(t === 'rentals') loadMyRentals();
             if(t === 'messages') loadMessages();
             if(t === 'admin') loadAdminData();
         }
@@ -432,9 +445,26 @@
         }
         
         function openChat(t) {
+            // Ocultar estado vacío
             document.getElementById('chat-empty-state').classList.add('hidden'); 
-            document.getElementById('chat-active-view').classList.remove('hidden');
             
+            // Mostrar vista de chat
+            const chatView = document.getElementById('chat-active-view');
+            chatView.classList.remove('hidden');
+            chatView.classList.add('flex'); // NECESARIO para que flex-col funcione
+            
+            // LÓGICA MÓVIL:
+            if (window.innerWidth < 768) {
+                // Ocultamos la columna de la lista
+                document.getElementById('msg-list-col').classList.add('hidden');
+                // Mostramos la columna del chat y le decimos que ocupe todo el ancho
+                const chatCol = document.getElementById('msg-chat-col');
+                chatCol.classList.remove('hidden'); 
+                chatCol.classList.add('flex'); // Forzamos flex
+                chatCol.classList.add('col-span-12'); // Ocupar todo
+            }
+
+            // Llenar datos (Igual)
             document.getElementById('chat-header').innerText = t.otherEmail; 
             document.getElementById('chat-subheader').innerText = t.spaceTitle; 
             document.getElementById('chat-to').value = t.otherId; 
@@ -447,19 +477,37 @@
                 const isMe = m.sender_id === currentUserId; 
                 b.innerHTML += `
                 <div class="flex flex-col ${isMe?'items-end':'items-start'} w-full animate-fade-in-up">
-                    <div class="${isMe?'bg-black text-white rounded-br-none':'bg-white text-black border border-gray-200 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm">
+                    <div class="${isMe?'bg-black text-white rounded-br-none':'bg-white text-black border border-gray-200 rounded-bl-none'} px-4 py-2 rounded-xl max-w-[85%] text-sm shadow-sm break-words">
                         ${m.content}
                     </div>
                     <span class="text-[10px] text-gray-400 mt-1 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                 </div>`; 
             }); 
             
-            setTimeout(() => b.scrollTop = b.scrollHeight, 100);
+            setTimeout(() => b.scrollTop = b.scrollHeight, 50);
+        }
+
+        function closeChatMobile() {
+            // Volver a mostrar la lista
+            document.getElementById('msg-list-col').classList.remove('hidden');
+            // Ocultar la columna de chat en móvil
+            document.getElementById('msg-chat-col').classList.add('hidden');
+            document.getElementById('msg-chat-col').classList.remove('flex');
         }
         
-        function closeChat() { 
-            document.getElementById('chat-active-view').classList.add('hidden'); 
-            document.getElementById('chat-empty-state').classList.remove('hidden'); 
+        function closeChat() {
+            // Ocultar la vista activa
+            const chatView = document.getElementById('chat-active-view');
+            chatView.classList.add('hidden');
+            chatView.classList.remove('flex');
+            
+            // Mostrar estado vacío
+            document.getElementById('chat-empty-state').classList.remove('hidden');
+            
+            // Si es móvil, ejecutar lógica de cierre móvil
+            if (window.innerWidth < 768) {
+                closeChatMobile();
+            }
         }
 
         async function loadAdminData() {

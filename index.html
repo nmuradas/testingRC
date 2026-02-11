@@ -2,7 +2,7 @@
 <html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Renty Club | Espacios Únicos</title>
     
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -289,20 +289,6 @@
         let allSpaces = []; let startDateGlobal = null; let endDateGlobal = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await db.auth.getSession();
-            const navRight = document.getElementById('nav-right');
-            
-            if (session) {
-                navRight.innerHTML = `
-                    <a href="dashboard.html" class="text-brand hover:text-gray-600 mr-4 font-bold uppercase tracking-wide text-xs transition">Mi Panel</a>
-                    <a href="create.html" class="bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:opacity-90 transition shadow-lg text-xs uppercase tracking-wide">Publicar</a>
-                `;
-            } else {
-                navRight.innerHTML = `
-                    <a href="login.html" class="text-secondary hover:text-brand font-bold uppercase tracking-wide text-xs transition">Ingresar</a>
-                    <a href="register.html" class="bg-black text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-gray-800 transition shadow-lg">REGISTRARSE</a>
-                `;
-            }
 
             const endPicker = flatpickr("#end-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd) => endDateGlobal = sd[0] });
             flatpickr("#start-date-search", { locale: "es", dateFormat: "Y-m-d", minDate: "today", onChange: (sd, ds) => { startDateGlobal = sd[0]; if(sd.length){ endPicker.set('minDate', ds); setTimeout(()=>endPicker.open(),100); } } });
