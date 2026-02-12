@@ -278,10 +278,13 @@ table thead th { background-color: #f9fafb !important; color: #71717a !important
 
 }
 
-/* FIX ICONOS EN LOGIN/REGISTER */
-.relative i.fa-envelope, 
-.relative i.fa-lock, 
-.relative i.fa-user {
+/* FIX ICONOS EN LOGIN/REGISTER - MODIFICADO */
+/* Agregamos el prefijo de los formularios para que NO afecte al menú ni al dashboard */
+#login-form .relative i.fa-lock, 
+#login-form .relative i.fa-envelope,
+#register-form .relative i.fa-lock,
+#register-form .relative i.fa-envelope,
+#register-form .relative i.fa-shield-check {
     position: absolute !important;
     left: 14px !important;
     top: 50% !important;
@@ -290,26 +293,11 @@ table thead th { background-color: #f9fafb !important; color: #71717a !important
     color: #a1a1aa !important;
 }
 
-/* Empujamos el texto hacia la derecha para que no toque el icono */
-input[type="email"], 
-input[type="password"], 
-input[type="text"] {
-    padding-left: 45px !important; /* Espacio sagrado para el icono */
-}
-
-/* FIX GLOBAL PARA INPUTS CON ICONOS */
-.relative i {
-    color: #94a3b8 !important; /* Gris suave */
-    pointer-events: none; /* Para que el click pase al input */
-}
-
-/* Forzamos el espacio a la izquierda en login y register */
-#login-form input, 
-#register-form input {
-    padding-left: 45px !important;
-}
-
-/* Si usas formularios fuera de esos IDs, usa esta clase general */
-.input-with-icon {
-    padding-left: 45px !important;
+/* Regla de seguridad para el menú desplegable y aside */
+/* Esto obliga a los iconos a comportarse normal en el nav y panel */
+#user-dropdown i, aside i {
+    position: static !important;
+    transform: none !important;
+    margin-right: 8px !important;
+    display: inline-block !important;
 }
